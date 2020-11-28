@@ -1,7 +1,7 @@
 html
   include head.pug
 
-  body
+  body.homepage
     .container
       include nav.pug
       .hero
@@ -12,12 +12,12 @@ html
           h2.year-title #{year}
           .works
             each project in projects[year]
-              section.preview
+              section.preview(
+                  data-image=project.data.project_image.url
+                  data-alt=project.data.project_image.alt
+                )
                 a(href=`/project/${project.uid}`)
-                  img.preview-image(
-                    src=project.data.project_image.url
-                    alt=project.data.project_image.alt
-                  )
+                  div.preview-image-wrapper
                   h3.preview-title !{project.data.project_title[0].text}
                   h5.preview-type !{project.data.project_type[0].text}
 
