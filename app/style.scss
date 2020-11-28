@@ -1,3 +1,158 @@
+* { box-sizing: border-box; }
+
+/* Define the "system" font family */
+@font-face {
+  font-family: system;
+  font-style: normal;
+  font-weight: 300;
+  src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
+}
+
 body {
-  background: red;
+  font-family: "system";
+  padding: 5rem 0;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  line-height: 1.6rem;
+}
+
+img {
+  max-width: 100%;
+}
+
+[data-oembed] {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 49.06%;
+  overflow: hidden;
+  margin-top: 2rem;
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; 
+  }
+}
+
+
+.container {
+  margin: 0 auto;
+  @media (min-width: 767px) {
+    max-width: 768px;
+  }
+}
+
+.logo {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.title {
+  color: rgba(black, 0.76);
+  font-size: 1rem;
+}
+
+.year-title {
+  font-size: 2.25rem;
+}
+
+.nav {
+  margin-bottom: 4rem;
+  li {
+    display: inline-block;
+    list-style: none;
+    margin-left: 24px;
+    &:after {
+      content: '/';
+      position: relative;
+      right: -12px;
+    }
+    &:first-of-type {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      &:after {
+        content: none;
+      }
+    }
+  }
+}
+
+.hero {
+  margin-bottom: 6rem;
+}
+
+.preview {
+  padding: 4px 24px;
+  display: inline-block;
+  width: 100%;
+  @media (min-width: 466px) {
+    width: 25%;
+  }
+  @media (min-width: 767px) {
+    width: 33%;
+  }
+  a {
+    text-decoration: none;
+  }
+}
+
+.works {
+
+  margin-left: -24px;
+  margin-right: -24px;
+}
+
+.year-wrapper {
+  
+  padding: 2rem 0;
+  &:first-of-type { padding-top: 0; }
+  &:last-of-type { padding-bottom: 0; }
+}
+
+.preview-type {
+  color: rgba(black, 0.8);
+  text-transform: capitalize;
+}
+
+.single-project-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.app-footer {
+  padding: 5rem 0 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.social {
+  li {
+    display: inline-block;
+    list-style: none;
+    margin-left: 24px;
+    &:after {
+      content: '/';
+      position: relative;
+      right: -12px;
+    }
+    &:first-of-type {
+      margin-left: 0;
+    }
+    &:last-of-type {
+      &:after {
+        content: none;
+      }
+    }
+  }
 }

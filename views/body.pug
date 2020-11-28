@@ -1,0 +1,25 @@
+html
+  include head.pug
+
+  body
+    .container
+      include nav.pug
+      .hero
+        h1.logo Georgi Nikolov
+        h2.title Frontend Developer
+      each year in Object.keys(projects).sort((a, b) => parseInt(b) - parseInt(a))
+        article.year-wrapper
+          h2.year-title #{year}
+          .works
+            each project in projects[year]
+              section.preview
+                a(href=`/project/${project.uid}`)
+                  img.preview-image(
+                    src=project.data.project_image.url
+                    alt=project.data.project_image.alt
+                  )
+                  h3.preview-title !{project.data.project_title[0].text}
+                  h5.preview-type !{project.data.project_type[0].text}
+
+
+  include footer.pug

@@ -6,7 +6,7 @@
     "start-server": "node app.js",
     "dev-server": "nodemon app.js",
     "watch": "parcel watch app/index.js",
-    "start-dev": "npm-run-all --parallel dev-server"
+    "start-dev": "npm-run-all --parallel dev-server watch"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -15,6 +15,7 @@
     "express": "~4.16.1",
     "method-override": "~2.3.10",
     "morgan": "~1.9.1",
+    "normalize.css": "^8.0.1",
     "prismic-dom": "~2.0.4",
     "prismic-javascript": "~1.4.0",
     "pug": "~2.0.0-rc.2",

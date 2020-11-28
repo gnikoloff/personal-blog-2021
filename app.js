@@ -38,13 +38,33 @@ app.use((req, res, next) => {
  */
 app.get('/', (req, res) => {
   req.prismic.api.query(
-    Prismic.Predicates.at('document.type', 'work')
+    Prismic.Predicates.at('document.type', 'work'),
   ).then((response) => {
-    const results = response.results || [];
-    // Render the 'page' pug template file (page.pug)
-    res.render('layout', { results });
+    let projects = (response.results || []).reduce((acc, item, i) => {
+      const projectYear = parseInt(item.data.project_year[0].text);
+      
+      if (!acc[projectYear]) {
+        acc[projectYear] = [ item ];
+      } else {
+        acc[projectYear] = [
+          ...acc[projectYear],
+          item,
+        ];
+      }
+      
+      return acc;
+    }, {});
+    // console.log(projects)
+
+    res.render('body', { projects });
   })
 });
+
+app.get('/project/:uid', (req, res) => {
+  req.prismic.api.getByUID('work', req.params.uid).then(project => {
+    res.render('single', { project });
+  });
+})
 
 /*
  * Prismic documentation to build your project with prismic
