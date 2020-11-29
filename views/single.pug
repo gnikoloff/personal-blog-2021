@@ -10,6 +10,7 @@ html
       h5.preview-type !{project.data.project_type[0].text}
       div !{PrismicDOM.RichText.asHtml(project.data.project_body, linkResolver)}
 
-      a(href="/") Back
+      a(href="/").back-link Back
 
   include footer.pug
+  
