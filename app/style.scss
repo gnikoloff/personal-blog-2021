@@ -13,10 +13,21 @@ ul {
 
 p {
   line-height: 1.6rem;
+  color: rgba(black, 0.82);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
 }
 
 img {
   max-width: 100%;
+}
+
+.block-img {
+  img {
+    width: 100%;
+  }
 }
 
 [data-oembed] {
@@ -173,4 +184,9 @@ img {
       }
     }
   }
+}
+
+.back-link {
+  margin-top: 5rem;
+  display: block;
 }
