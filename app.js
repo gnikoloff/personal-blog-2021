@@ -34,6 +34,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   req.prismic.api.query(
     Prismic.Predicates.at('document.type', 'work'),
+    { pageSize: 100 }
   ).then((response) => {
     const projects = (response.results || []).reduce((acc, item, i) => {
       const projectYear = parseInt(item.data.project_year[0].text);
