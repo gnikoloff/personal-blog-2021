@@ -1,0 +1,17 @@
+html
+  include head.pug
+
+  body
+    .container
+      include nav.pug
+      .hero
+        h1.logo Georgi Nikolov
+        h2.title Frontend Developer
+      
+      h1 About
+      div !{PrismicDOM.RichText.asHtml(document.data.text, linkResolver)}
+
+      a(href="/").back-link Back
+
+  include footer.pug
+  

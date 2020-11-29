@@ -63,4 +63,16 @@ app.get('/project/:uid', (req, res) => {
       project,
     });
   });
-})
+});
+
+app.get('/about', (req, res) => {
+  req.prismic.api.query(
+    Prismic.Predicates.at('document.type', 'about'),
+  ).then(response => {
+    const document = response.results[0];
+    res.render('about', {
+      title: getPageTitle('About'),
+      document,
+    });
+  });
+});
