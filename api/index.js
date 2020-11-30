@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
     { pageSize: 100 }
   ).then((response) => {
     const projects = (response.results || []).reduce((acc, item, i) => {
-      const projectYear = parseInt(item.data.project_year[0].text);
+      const projectYear = parseInt(item.data.project_year[0].text, 10);
       if (!acc[projectYear]) {
         acc[projectYear] = [ item ];
       } else {
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/project/:uid', (req, res) => {
-  req.prismic.api.getByUID('work', req.params.uid).then(project => {
+  req.prismic.api.getByUID('work', req.params.uid).then((project) => {
     res.render('single', {
       title: getPageTitle(project.data.project_title[0].text),
       project,
@@ -69,7 +69,7 @@ app.get('/project/:uid', (req, res) => {
 app.get('/about', (req, res) => {
   req.prismic.api.query(
     Prismic.Predicates.at('document.type', 'about'),
-  ).then(response => {
+  ).then((response) => {
     const document = response.results[0];
     res.render('about', {
       title: getPageTitle('About'),
