@@ -20,6 +20,13 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
+code {
+  background: rgba(black, 0.8);
+  color: white;
+  padding: 1px 3px;
+  border-radius: 2px;
+}
+
 img {
   max-width: 100%;
 }
