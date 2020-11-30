@@ -1,16 +1,18 @@
 const Prismic = require('prismic-javascript');
 const PrismicDOM = require('prismic-dom');
 const request = require('request');
-const PrismicConfig = require('./prismic-configuration');
-const app = require('./config');
+const PrismicConfig = require('../prismic-configuration');
+const app = require('../config');
 
 const PORT = app.get('port');
 
 const getPageTitle = title => `${title} | Georgi Nikolov`;
 
-app.listen(PORT, () => {
-  process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`);
-});
+if (process.env.ENVIRONMENT === 'development') {
+  app.listen(PORT, () => {
+    process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`);
+  });
+}
 
 // Middleware to inject prismic context
 app.use((req, res, next) => {
@@ -76,3 +78,5 @@ app.get('/about', (req, res) => {
     });
   });
 });
+
+module.exports = app
