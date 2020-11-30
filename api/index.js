@@ -1,6 +1,5 @@
 const Prismic = require('prismic-javascript');
 const PrismicDOM = require('prismic-dom');
-const request = require('request');
 const PrismicConfig = require('../prismic-configuration');
 const app = require('../config');
 
@@ -79,4 +78,4 @@ app.get('/about', (req, res) => {
   });
 });
 
-module.exports = app
+module.exports = app;
