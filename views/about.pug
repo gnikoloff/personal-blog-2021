@@ -5,11 +5,26 @@ html
     .container
       include nav.pug
       .hero
-        h1.logo Georgi Nikolov
-        h2.title Frontend Developer
+        div
+          h1.logo Georgi Nikolov
+          h2.title Frontend Developer
+        ul.social
+          li
+            a(href="https://twitter.com/georgiNikoloff" target="_blank") Twitter
+          li
+            a(href="https://github.com/gnikoloff" target="_blank") Github
+          li
+            a(href="https://codepen.io/gbnikolov" target="_blank") Codepen
       
       h1 About
-      div !{PrismicDOM.RichText.asHtml(document.data.text, linkResolver)}
+      div.about-wrapper
+        aside
+          img(
+            src=document.data.mugshot.url
+            alt=document.data.mugshot.alt
+          )
+        main !{PrismicDOM.RichText.asHtml(document.data.text, linkResolver)}
+      div !{PrismicDOM.RichText.asHtml(document.data.experience, linkResolver)}
 
       a(href="/").back-link Back
 

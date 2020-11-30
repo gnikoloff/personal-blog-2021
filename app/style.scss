@@ -13,7 +13,7 @@ ul {
 
 p {
   line-height: 1.6rem;
-  color: rgba(black, 0.82);
+  color: rgba(black, 0.76);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -198,4 +198,19 @@ img {
 .back-link {
   margin-top: 5rem;
   display: block;
+}
+
+.about-wrapper {
+  @media (min-width: 600px) {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+
+    aside {
+      width: 40%;
+    }
+    main {
+      width: 55%;
+    }
+  }
 }
