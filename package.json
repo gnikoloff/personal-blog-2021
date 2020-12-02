@@ -6,7 +6,9 @@
     "start-server": "node api/index.js",
     "dev-server": "ENVIRONMENT=development nodemon api/index.js",
     "watch": "parcel watch app/index.js",
-    "start-dev": "npm-run-all --parallel dev-server watch"
+    "build": "parcel build app/index.js",
+    "start-dev": "npm-run-all --parallel dev-server watch",
+    "start": "npm-run-all --parallel start-server build"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
