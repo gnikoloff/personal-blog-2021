@@ -10,6 +10,14 @@
     {
       "src": "(.*)",
       "dest": "api/index.js"
+    },
+    {
+      "src": "/project/(.*)",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/blog/(.*)",
+      "dest": "api/index.js"
     }
   ]
 }

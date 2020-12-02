@@ -35,12 +35,12 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   req.prismic.api.query(
     Prismic.Predicates.at('document.type', 'work'),
-    { pageSize: 100 }
+    { pageSize: 100 },
   ).then((response) => {
     const projects = (response.results || []).reduce((acc, item, i) => {
       const projectYear = parseInt(item.data.project_year[0].text, 10);
       if (!acc[projectYear]) {
-        acc[projectYear] = [ item ];
+        acc[projectYear] = [item];
       } else {
         acc[projectYear] = [
           ...acc[projectYear],
@@ -67,13 +67,45 @@ app.get('/project/:uid', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-  req.prismic.api.query(
-    Prismic.Predicates.at('document.type', 'about'),
-  ).then((response) => {
+  req.prismic.api.query(Prismic.Predicates.at('document.type', 'about')).then((response) => {
     const document = response.results[0];
     res.render('about', {
       title: getPageTitle('About'),
       document,
+    });
+  });
+});
+
+app.get('/blog', (req, res) => {
+  req.prismic.api.query(
+    Prismic.Predicates.at('document.type', 'blog'),
+    { pageSize: 100 },
+  ).then((response) => {
+    const projects = (response.results || []).map((project) => {
+      const date = new Date(project.first_publication_date);
+      const formatNumber = (number) => {
+        let numberFormat;
+        if (number < 10) {
+          numberFormat = `0${number}`;
+        } else {
+          numberFormat = number.toString();
+        }
+        return numberFormat;
+      };
+      const day = formatNumber(date.getDay());
+      const month = formatNumber(date.getMonth());
+      const year = formatNumber(date.getFullYear());
+
+      const formattedDate = `${day}.${month}.${year}`;
+
+      return {
+        ...project,
+        formattedDate,
+      };
+    });
+    res.render('blog', {
+      title: getPageTitle('Blog'),
+      projects,
     });
   });
 });

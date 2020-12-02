@@ -1,0 +1,21 @@
+html
+  include head.pug
+
+  body
+    .container
+      include nav.pug
+      .hero
+        div
+          h1.logo Georgi Nikolov
+          h2.title Frontend Developer
+    
+      ol.blog-wrapper
+        each project in projects
+          li
+            article
+              a(href=`/blog/${project.uid}`)
+                div !{PrismicDOM.RichText.asHtml(project.data.title, linkResolver)}
+              h5 !{project.formattedDate}
+              
+  include footer.pug
+  
