@@ -13,6 +13,23 @@ if (process.env.ENVIRONMENT === 'development') {
   });
 }
 
+const getFormattedDate = (date) => {
+  const formatNumber = (number) => {
+    let numberFormat;
+    if (number < 10) {
+      numberFormat = `0${number}`;
+    } else {
+      numberFormat = number.toString();
+    }
+    return numberFormat;
+  };
+  const day = formatNumber(date.getDay());
+  const month = formatNumber(date.getMonth());
+  const year = formatNumber(date.getFullYear());
+
+  return `${day}.${month}.${year}`;
+};
+
 // Middleware to inject prismic context
 app.use((req, res, next) => {
   res.locals.ctx = {
@@ -83,29 +100,25 @@ app.get('/blog', (req, res) => {
   ).then((response) => {
     const projects = (response.results || []).map((project) => {
       const date = new Date(project.first_publication_date);
-      const formatNumber = (number) => {
-        let numberFormat;
-        if (number < 10) {
-          numberFormat = `0${number}`;
-        } else {
-          numberFormat = number.toString();
-        }
-        return numberFormat;
-      };
-      const day = formatNumber(date.getDay());
-      const month = formatNumber(date.getMonth());
-      const year = formatNumber(date.getFullYear());
-
-      const formattedDate = `${day}.${month}.${year}`;
-
       return {
         ...project,
-        formattedDate,
+        formattedDate: getFormattedDate(date),
       };
     });
     res.render('blog', {
       title: getPageTitle('Blog'),
       projects,
+    });
+  });
+});
+
+app.get('/blog/:uid', (req, res) => {
+  req.prismic.api.getByUID('blog', req.params.uid).then((project) => {
+    const date = new Date(project.first_publication_date);
+    res.render('blog-single', {
+      title: getPageTitle(project.data.title[0].text),
+      formattedDate: getFormattedDate(date),
+      project,
     });
   });
 });

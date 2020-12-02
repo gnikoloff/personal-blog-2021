@@ -1,0 +1,21 @@
+html
+  include head.pug
+
+  body
+    .container
+      include nav.pug
+      .single-blog-title
+        div !{PrismicDOM.RichText.asHtml(project.data.title, linkResolver)}
+        div #{formattedDate}
+      
+      main.single-blog-main
+        article !{PrismicDOM.RichText.asHtml(project.data.body, linkResolver)}
+      //-   h1 !{project.data.project_title[0].text}
+      //-   h5.preview-year !{project.data.project_year[0].text}  
+      //- h5.preview-type !{project.data.project_type[0].text}
+      //- div !{PrismicDOM.RichText.asHtml(project.data.project_body, linkResolver)}
+
+      a(href="/blog").back-link Back
+
+  include footer.pug
+  
