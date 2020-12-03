@@ -1,6 +1,52 @@
 head
   title=title
 
-  link(rel="stylesheet" href="/index.css")
-
   meta(name="viewport", content="width=device-width, initial-scale=1")
+  meta(
+    name="title"
+    content=title
+  )
+  meta(
+    name="description"
+    content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+  )
+
+  meta(
+    property="og:type"
+    content="website"
+  )
+  meta(
+    property="og:url"
+    content="https://archive.georgi-nikolov.com/"
+  )
+  meta(
+    property="og:title"
+    content=title
+  )
+  meta(
+    property="og:description"
+    content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+  )
+
+  meta(
+    property="twitter:card"
+    content="summary"
+  )
+  meta(
+    property="twitter:url"
+    content="https://archive.georgi-nikolov.com/"
+  )
+  meta(
+    property="twitter:title"
+    content=title
+  )
+  meta(
+    property="twitter:description"
+    content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+  )
+
+
+  link(
+    rel="stylesheet"
+    href="/index.css"
+  )
