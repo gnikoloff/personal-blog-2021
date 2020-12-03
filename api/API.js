@@ -45,12 +45,10 @@ class API {
         }, {});
         const homepageData = {
           projects,
-        };
-        this._cache.set(HOMEPAGE_CACHE_KEY, homepageData);
-        return {
-          homepageData,
           projectsRaw: response.results || [],
         };
+        this._cache.set(HOMEPAGE_CACHE_KEY, homepageData);
+        return homepageData;
       });
   }
   fetchAboutPage() {
