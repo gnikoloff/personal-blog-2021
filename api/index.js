@@ -211,7 +211,7 @@ app.get('/feed.rss', (req, res) => {
               return {
                 item: [
                   { title: project.data.project_title[0].text },
-                  { author: 'Georgi Nikolov' },
+                  { author: 'nikoloffgeorgi@gmail.com' },
                   { pubDate: postDate },
                   { link: absoluteHREF },
                   { guid: absoluteHREF },
@@ -225,7 +225,7 @@ app.get('/feed.rss', (req, res) => {
               return {
                 item: [
                   { title: article.data.title[0].text },
-                  { author: 'Georgi Nikolov' },
+                  { author: 'nikoloffgeorgi@gmail.com' },
                   { pubDate: postDate },
                   { link: absoluteHREF },
                   { guid: absoluteHREF },
