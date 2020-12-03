@@ -1,8 +1,10 @@
 const Prismic = require('prismic-javascript');
 const PrismicDOM = require('prismic-dom');
+const xml = require('xml');
 const { SitemapStream, streamToPromise } = require('sitemap');
 const { createGzip } = require('zlib');
 const { Readable } = require('stream');
+const rfc822Date = require('rfc822-date');
 
 const PrismicConfig = require('../prismic-configuration');
 const app = require('../config');
@@ -13,6 +15,7 @@ const {
 } = require('./helpers');
 
 const PORT = app.get('port');
+const WEBSITE_FULL_URL = 'https://archive.georgi-nikolov.com';
 
 let sitemap;
 
@@ -45,10 +48,10 @@ app.get('/', (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchHomepage({ pageSize: 100 })
-    .then(({ projects }) => {
+    .then(({ projectsRaw }) => {
       res.render('body', {
         title: getPageTitle('Home'),
-        projects,
+        projects: projectsRaw,
       });
     });
 });
@@ -108,8 +111,7 @@ app.get('/sitemap.xml', (req, res) => {
   }
 
   try {
-    const siteURL = 'https://personal-blog-2021.vercel.app/';
-    const smStream = new SitemapStream({ hostname: siteURL });
+    const smStream = new SitemapStream({ hostname: WEBSITE_FULL_URL });
     const pipeline = smStream.pipe(createGzip());
 
     // pipe your entries or directly write them.
@@ -127,30 +129,29 @@ app.get('/sitemap.xml', (req, res) => {
       url: '/blog',
     }); // changefreq: 'weekly',  priority: 0.5
 
+    const APIInstance = API.getInstance(req.prismic);
+
     Promise.all([
-      req.prismic.api.query(
-        Prismic.Predicates.at('document.type', 'blog'),
-        { pageSize: 100 },
-      ),
-      req.prismic.api.query(
-        Prismic.Predicates.at('document.type', 'work'),
-        { pageSize: 100 },
-      ),
+      APIInstance.fetchBlog({ pageSize: 50 }),
+      APIInstance.fetchHomepage({ pageSize: 50 }),
     ]).then((responses) => {
-      const blogPorts = responses[0] ? responses[0].results : [];
+      const blogPorts = responses[0] ? responses[0] : [];
 
       const posts = responses[1];
-      const projects = posts ? posts.results : [];
+      const projects = posts ? posts.projects : [];
 
       blogPorts.forEach((blog) => {
         smStream.write({
           url: `/blog/${blog.uid}`,
         });
       });
-      projects.forEach((project) => {
-        smStream.write({
-          url: `/project/${project.uid}`,
-          img: project.data.project_image.url,
+
+      Object.values(projects).forEach((projects) => {
+        Object.values(projects).forEach((project) => {
+          smStream.write({
+            url: `/project/${project.uid}`,
+            img: project.data.project_image.url,
+          });
         });
       });
       // cache the response
@@ -169,6 +170,77 @@ app.get('/sitemap.xml', (req, res) => {
     console.error(e);
     res.status(500).end();
   }
+});
+
+app.get('/feed.rss', (req, res) => {
+  const APIInstance = API.getInstance(req.prismic);
+  Promise.all([
+    APIInstance.fetchBlog({ pageSize: 50 }),
+    APIInstance.fetchHomepage({ pageSize: 50 }),
+  ]).then((responses) => {
+    const blogPorts = responses[0] ? responses[0] : [];
+    const posts = responses[1] ? responses[1] : {};
+
+    const projects = posts.projectsRaw;
+    const xmlObject = {
+      rss: [
+        {
+          _attr: {
+            version: '2.0',
+            'xmlns:atom': 'http://www.w3.org/2005/Atom',
+          },
+        },
+        {
+          channel: [
+            {
+              'atom:link': {
+                _attr: {
+                  href: `${WEBSITE_FULL_URL}/feed.rss`,
+                  rel: 'self',
+                  type: 'application/rss+xml',
+                },
+              },
+            },
+            { title: 'Georgi Nikolov' },
+            { link: WEBSITE_FULL_URL },
+            { description: 'Website for blog articles and works by Georgi Nikolov, a frontend developer living in Berlin, Germany.' },
+            { language: 'en-us' },
+            ...projects.map((project) => {
+              const absoluteHREF = `${WEBSITE_FULL_URL}/project/${project.uid}`;
+              const postDate = rfc822Date(new Date(project.first_publication_date));
+              return {
+                item: [
+                  { title: project.data.project_title[0].text },
+                  { author: 'Georgi Nikolov' },
+                  { pubDate: postDate },
+                  { link: absoluteHREF },
+                  { guid: absoluteHREF },
+                  { description: { _cdata: PrismicDOM.RichText.asHtml(project.data.project_body) } },
+                ],
+              };
+            }),
+            ...blogPorts.map((article) => {
+              const absoluteHREF = `${WEBSITE_FULL_URL}/blog/${article.uid}`;
+              const postDate = rfc822Date(new Date(article.first_publication_date));
+              return {
+                item: [
+                  { title: article.data.title[0].text },
+                  { author: 'Georgi Nikolov' },
+                  { pubDate: postDate },
+                  { link: absoluteHREF },
+                  { guid: absoluteHREF },
+                  { description: { _cdata: PrismicDOM.RichText.asHtml(article.data.body) } },
+                ],
+              };
+            }),
+          ],
+        },
+      ],
+    };
+    const xmlString = `<?xml version="1.0" encoding="UTF-8"?>${xml(xmlObject)}`;
+    res.set('Content-Type', 'text/xml');
+    res.send(xmlString);
+  });
 });
 
 module.exports = app;

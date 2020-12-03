@@ -23,8 +23,10 @@
     "prismic-javascript": "~1.4.0",
     "pug": "^2.0.4",
     "request": "~2.83.0",
+    "rfc822-date": "0.0.3",
     "serve-favicon": "~2.4.3",
-    "sitemap": "^6.3.3"
+    "sitemap": "^6.3.3",
+    "xml": "^1.0.1"
   },
   "repository": {
     "type": "git",
