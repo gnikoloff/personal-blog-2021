@@ -7,6 +7,7 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const errorHandler = require('errorhandler');
+const compression = require('compression');
 const path = require('path');
 
 module.exports = (() => {
@@ -18,6 +19,7 @@ module.exports = (() => {
   app.set('view engine', 'pug');
   // app.use(favicon('public/images/punch.png'));
   // app.use(logger('dev'));
+  app.use(compression());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(methodOverride());
