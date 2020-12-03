@@ -3,7 +3,14 @@ const PrismicDOM = require('prismic-dom');
 const PrismicConfig = require('../prismic-configuration');
 const app = require('../config');
 
+const { SitemapStream, streamToPromise } = require('sitemap');
+const { createGzip } = require('zlib');
+const { Readable } = require('stream');
+
 const PORT = app.get('port');
+
+let sitemap;
+
 
 const getPageTitle = title => `${title} | Georgi Nikolov`;
 
@@ -121,6 +128,79 @@ app.get('/blog/:uid', (req, res) => {
       project,
     });
   });
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.header('Content-Type', 'application/xml');
+  res.header('Content-Encoding', 'gzip');
+  // if we have a cached entry send it
+  if (sitemap) {
+    res.send(sitemap);
+    return;
+  }
+
+  try {
+    const siteURL = 'https://personal-blog-2021.vercel.app/';
+    const smStream = new SitemapStream({ hostname: siteURL });
+    const pipeline = smStream.pipe(createGzip());
+
+    // pipe your entries or directly write them.
+    smStream.write({
+      url: '/',
+      changefreq: 'weekly',
+      priority: 0.7,
+    });
+    smStream.write({
+      url: '/about',
+      changefreq: 'monthly',
+      priority: 0.3,
+    });
+    smStream.write({
+      url: '/blog',
+    }); // changefreq: 'weekly',  priority: 0.5
+
+    Promise.all([
+      req.prismic.api.query(
+        Prismic.Predicates.at('document.type', 'blog'),
+        { pageSize: 100 },
+      ),
+      req.prismic.api.query(
+        Prismic.Predicates.at('document.type', 'work'),
+        { pageSize: 100 },
+      ),
+    ]).then((responses) => {
+      const blogPorts = responses[0] ? responses[0].results : [];
+
+      const posts = responses[1];
+      const projects = posts ? posts.results : [];
+
+      blogPorts.forEach((blog) => {
+        smStream.write({
+          url: `/blog/${blog.uid}`,
+        });
+      });
+      projects.forEach((project) => {
+        smStream.write({
+          url: `/project/${project.uid}`,
+          img: project.data.project_image.url,
+        });
+      });
+      // cache the response
+      streamToPromise(pipeline).then(sm => sitemap = sm);
+      // make sure to attach a write stream such as streamToPromise before ending
+      smStream.end();
+      // stream write the response
+      pipeline.pipe(res).on('error', (e) => { throw e; });
+    });
+
+    /* or use
+    Readable.from([{url: '/page-1'}...]).pipe(smStream)
+    if you are looking to avoid writing your own loop.
+    */
+  } catch (e) {
+    console.error(e);
+    res.status(500).end();
+  }
 });
 
 module.exports = app;
