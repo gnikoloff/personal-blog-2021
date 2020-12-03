@@ -1,41 +1,26 @@
 const Prismic = require('prismic-javascript');
 const PrismicDOM = require('prismic-dom');
-const PrismicConfig = require('../prismic-configuration');
-const app = require('../config');
-
 const { SitemapStream, streamToPromise } = require('sitemap');
 const { createGzip } = require('zlib');
 const { Readable } = require('stream');
 
+const PrismicConfig = require('../prismic-configuration');
+const app = require('../config');
+const API = require('./API');
+
+const {
+  getPageTitle,
+} = require('./helpers');
+
 const PORT = app.get('port');
 
 let sitemap;
-
-
-const getPageTitle = title => `${title} | Georgi Nikolov`;
 
 if (process.env.ENVIRONMENT === 'development') {
   app.listen(PORT, () => {
     process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`);
   });
 }
-
-const getFormattedDate = (date) => {
-  const formatNumber = (number) => {
-    let numberFormat;
-    if (number < 10) {
-      numberFormat = `0${number}`;
-    } else {
-      numberFormat = number.toString();
-    }
-    return numberFormat;
-  };
-  const day = formatNumber(date.getDay());
-  const month = formatNumber(date.getMonth());
-  const year = formatNumber(date.getFullYear());
-
-  return `${day}.${month}.${year}`;
-};
 
 // Middleware to inject prismic context
 app.use((req, res, next) => {
@@ -57,77 +42,60 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  req.prismic.api.query(
-    Prismic.Predicates.at('document.type', 'work'),
-    { pageSize: 100 },
-  ).then((response) => {
-    const projects = (response.results || []).reduce((acc, item, i) => {
-      const projectYear = parseInt(item.data.project_year[0].text, 10);
-      if (!acc[projectYear]) {
-        acc[projectYear] = [item];
-      } else {
-        acc[projectYear] = [
-          ...acc[projectYear],
-          item,
-        ];
-      }
-      return acc;
-    }, {});
-
-    res.render('body', {
-      title: getPageTitle('Home'),
-      projects,
+  API
+    .getInstance(req.prismic)
+    .fetchHomepage({ pageSize: 100 })
+    .then(({ projects }) => {
+      res.render('body', {
+        title: getPageTitle('Home'),
+        projects,
+      });
     });
-  });
 });
 
 app.get('/project/:uid', (req, res) => {
-  req.prismic.api.getByUID('work', req.params.uid).then((project) => {
-    res.render('single', {
-      title: getPageTitle(project.data.project_title[0].text),
-      project,
+  API
+    .getInstance(req.prismic)
+    .fetchWork(req.params.uid)
+    .then((project) => {
+      res.render('single', {
+        title: getPageTitle(project.data.project_title[0].text),
+        project,
+      });
     });
-  });
 });
 
 app.get('/about', (req, res) => {
-  req.prismic.api.query(Prismic.Predicates.at('document.type', 'about')).then((response) => {
-    const document = response.results[0];
-    res.render('about', {
-      title: getPageTitle('About'),
-      document,
+  API
+    .getInstance(req.prismic)
+    .fetchAboutPage()
+    .then((document) => {
+      res.render('about', {
+        title: getPageTitle('About'),
+        document,
+      });
     });
-  });
 });
 
 app.get('/blog', (req, res) => {
-  req.prismic.api.query(
-    Prismic.Predicates.at('document.type', 'blog'),
-    { pageSize: 100 },
-  ).then((response) => {
-    const projects = (response.results || []).map((project) => {
-      const date = new Date(project.first_publication_date);
-      return {
-        ...project,
-        formattedDate: getFormattedDate(date),
-      };
+  API
+    .getInstance(req.prismic)
+    .fetchBlog({ pageSize: 100 })
+    .then((projects) => {
+      res.render('blog', {
+        title: getPageTitle('Blog'),
+        projects,
+      });
     });
-    res.render('blog', {
-      title: getPageTitle('Blog'),
-      projects,
-    });
-  });
 });
 
 app.get('/blog/:uid', (req, res) => {
-  req.prismic.api.getByUID('blog', req.params.uid).then((project) => {
-    const date = new Date(project.first_publication_date);
-    res.render('blog-single', {
-      title: getPageTitle(project.data.title[0].text),
-      formattedDate: getFormattedDate(date),
-      project,
+  API
+    .getInstance(req.prismic)
+    .fetchArticle(req.params.uid)
+    .then((articlePage) => {
+      res.render('blog-single', articlePage);
     });
-  });
 });
 
 app.get('/sitemap.xml', (req, res) => {
