@@ -48,10 +48,10 @@ app.get('/', (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchHomepage({ pageSize: 100 })
-    .then(({ projectsRaw }) => {
+    .then(({ projects }) => {
       res.render('body', {
         title: getPageTitle('Home'),
-        projects: projectsRaw,
+        projects,
       });
     });
 });
