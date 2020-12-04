@@ -10,7 +10,7 @@ html(lang="en")
     )
     meta(
       name="description"
-      content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+      content=(seoDescription || 'Projects and articles by frontend developer Georgi Nikolov')
     )
 
     meta(
@@ -27,7 +27,7 @@ html(lang="en")
     )
     meta(
       property="og:description"
-      content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+      content=(seoDescription || 'Projects and articles by frontend developer Georgi Nikolov')
     )
 
     meta(
@@ -44,7 +44,7 @@ html(lang="en")
     )
     meta(
       property="twitter:description"
-      content=(pageMeta ? pageMeta.desctiption : 'Projects and articles by frontend developer Georgi Nikolov')
+      content=(seoDescription || 'Projects and articles by frontend developer Georgi Nikolov')
     )
 
     link(

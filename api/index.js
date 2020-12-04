@@ -62,6 +62,7 @@ app.get('/project/:uid', (req, res) => {
     .fetchWork(req.params.uid)
     .then((project) => {
       res.render('single', {
+        seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
         project,
       });
@@ -97,7 +98,11 @@ app.get('/blog/:uid', (req, res) => {
     .getInstance(req.prismic)
     .fetchArticle(req.params.uid)
     .then((articlePage) => {
-      res.render('blog-single', articlePage);
+      const pageData = {
+        seoDescription: articlePage.project.data.seo_description,
+        ...articlePage
+      };
+      res.render('blog-single', pageData);
     });
 });
 
