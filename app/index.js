@@ -33,6 +33,7 @@ function initHome () {
           const entry = entries[0]
           if (entry.isIntersecting) {
             makeImage()
+            observer.unobserve(workEl)
           }
         }
         const observer = new IntersectionObserver(onObserve)
