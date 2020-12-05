@@ -1,20 +1,40 @@
 import 'normalize.css'
 import './style.scss'
 
-
-
 document.addEventListener('DOMContentLoaded', init)
 
 function init () {
   if (document.body.classList.contains('homepage')) {
     initHome()
+  } else if (document.body.classList.contains('single-blog')) {
+    initSingle()
+  }
+}
+
+function initSingle () {
+  const allSnippets = document.querySelectorAll('.single-blog-main pre')
+  // debugger
+  for (let i = 0; i < allSnippets.length; i++) {
+    const snippet = allSnippets[i]
+    let newSnippetHTML = ''
+    for (let i = 0; i < snippet.children.length; i++) {
+      const node = snippet.children[i]
+      const nodeName = node.nodeName
+      if (nodeName === 'P') {
+        if (!node.innerHTML.trim().length) {
+          node.parentNode.removeChild(node)
+        }
+        const nodeText = node.textContent
+        newSnippetHTML += nodeText
+        if (node.parentNode) {
+          node.parentNode.removeChild(node)
+        }
+      }
+    }
   }
 }
 
 function initHome () {
-  if (supportIntersectObserver()) {
-    console.log('yes')
-  }
   const allWorks = document.getElementsByClassName('preview')
   for (let i = 0; i < allWorks.length; i++) {
     const workEl = allWorks[i]
