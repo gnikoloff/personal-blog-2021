@@ -1,6 +1,15 @@
 import 'normalize.css'
 import './style.scss'
 
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import glsl from 'highlight.js/lib/languages/glsl'
+
+import 'highlight.js/styles/codepen-embed.css';
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('glsl', glsl)
+
 document.addEventListener('DOMContentLoaded', init)
 
 function init () {
@@ -16,21 +25,46 @@ function initSingle () {
   // debugger
   for (let i = 0; i < allSnippets.length; i++) {
     const snippet = allSnippets[i]
+    if (snippet.classList.contains('inline-pre')) {
+      continue
+    }
+
+    // hljs.highlightBlock(snippet)
+    snippet.style.opacity = '0'
     let newSnippetHTML = ''
+    console.log(snippet.children)
     for (let i = 0; i < snippet.children.length; i++) {
       const node = snippet.children[i]
       const nodeName = node.nodeName
-      if (nodeName === 'P') {
+      console.log(node.innerHTML)
+      // if (nodeName === 'P') {
         if (!node.innerHTML.trim().length) {
-          node.parentNode.removeChild(node)
+          // node.parentNode.removeChild(node)
         }
-        const nodeText = node.textContent
-        newSnippetHTML += nodeText
+        const nodeText = node.innerHTML.trim()
+        // console.log(node.innerHTML)
+        if (nodeText.startsWith('// ')) {
+          newSnippetHTML += `${nodeText}\n`
+        } else {
+          newSnippetHTML += `${nodeText}\n`
+        }
         if (node.parentNode) {
           node.parentNode.removeChild(node)
         }
-      }
+      // }
     }
+    const codeTag = document.createElement('code')
+    codeTag.innerHTML = `
+      <pre>
+        ${newSnippetHTML}
+      </pre>
+    `
+    // console.log(codeTag)
+    snippet.replaceWith(codeTag)
+    setTimeout(() => {
+      // hljs.highlightBlock(codeTag);
+      snippet.style.opacity = '1'
+    }, 0)
   }
 }
 
