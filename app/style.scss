@@ -50,6 +50,9 @@ pre {
 
 img {
   max-width: 100%;
+  &[src*=".gif"] {
+    width: auto !important;
+  }
 }
 
 .block-img {
@@ -260,6 +263,16 @@ img {
   }
   h5 {
     margin-top: -0.75rem;
+  }
+}
+
+.single-work {
+  h4 {
+    margin-bottom: -10px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(black, 0.72);
   }
 }
 
