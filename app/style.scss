@@ -57,7 +57,7 @@ img {
 
 .block-img {
   img {
-    width: 100%;
+    // width: 100%;
   }
 }
 
@@ -235,10 +235,17 @@ img {
   }
 }
 
-.back-link {
+.single-project-footer {
   margin-top: 5rem;
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+// .back-link {
+//   margin-top: 5rem;
+//   display: block;
+// }
 
 .about-wrapper {
   @media (min-width: 600px) {

@@ -10,7 +10,9 @@ html
       h5.preview-type !{project.data.project_type[0].text}
       div !{PrismicDOM.RichText.asHtml(project.data.project_body, linkResolver)}
 
-      a(href="/").back-link Back
+      footer.single-project-footer
+        a(href=prevProjectLink).back-link &larr; !{prevProjectName}
+        a(href=nextProjectLink).back-link !{nextProjectName} &rarr;
 
   include footer.pug
   

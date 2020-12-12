@@ -24,7 +24,7 @@ class API {
     this._Prismic = Prismic;
     this._cache = new NodeCache({ stdTTL: 100, checkperiod: 60 * 30 });
   }
-  fetchHomepage(opts) {
+  fetchAllProjects(opts) {
     const homepage = this._cache.get(HOMEPAGE_CACHE_KEY);
     if (homepage) {
       return Promise.resolve(homepage);
@@ -43,9 +43,10 @@ class API {
           }
           return acc;
         }, {});
+        const projectsRaw = (response.results || []).sort((a, b) => parseInt(b.data.project_year[0].text, 10) - parseInt(a.data.project_year[0].text, 10))
         const homepageData = {
           projects,
-          projectsRaw: response.results || [],
+          projectsRaw,
         };
         this._cache.set(HOMEPAGE_CACHE_KEY, homepageData);
         return homepageData;
@@ -53,9 +54,9 @@ class API {
   }
   fetchAboutPage() {
     const aboutPage = this._cache.get(ABOUT_CACHE_KEY);
-    if (aboutPage) {
-      return Promise.resolve(aboutPage);
-    }
+    // if (aboutPage && process.env.ENVIRONMENT !== 'development') {
+    //   return Promise.resolve(aboutPage);
+    // }
     return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'about')).then((response) => {
       const document = response.results[0];
       this._cache.set(ABOUT_CACHE_KEY, document);
@@ -63,21 +64,11 @@ class API {
       return document;
     });
   }
-  fetchWork(uid) {
-    const workPage = this._cache.get(uid);
-    if (workPage) {
-      return Promise.resolve(workPage);
-    }
-    return this._Prismic.api.getByUID('work', uid).then((work) => {
-      this._cache.set(uid, work);
-      return work;
-    });
-  }
   fetchBlog(opts) {
     const aboutPage = this._cache.get(BLOG_CACHE_KEY);
-    if (aboutPage) {
-      return Promise.resolve(aboutPage);
-    }
+    // if (aboutPage && process.env.ENVIRONMENT !== 'development') {
+    //   return Promise.resolve(aboutPage);
+    // }
     return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'blog'), opts).then((response) => {
       const projects = (response.results || []).map((project) => {
         const date = new Date(project.first_publication_date);
@@ -94,9 +85,9 @@ class API {
   }
   fetchArticle(uid) {
     const articlePge = this._cache.get(uid);
-    if (articlePge) {
-      return Promise.resolve(articlePge);
-    }
+    // if (articlePge && process.env.ENVIRONMENT !== 'development') {
+    //   return Promise.resolve(articlePge);
+    // }
     return this._Prismic.api.getByUID('blog', uid).then((project) => {
       const date = new Date(project.first_publication_date);
       const articlePge = {

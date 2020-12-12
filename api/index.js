@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   API
     .getInstance(req.prismic)
-    .fetchHomepage({ pageSize: 100 })
+    .fetchAllProjects({ pageSize: 100 })
     .then(({ projects }) => {
       res.render('body', {
         title: getPageTitle('Home'),
@@ -59,12 +59,42 @@ app.get('/', (req, res) => {
 app.get('/project/:uid', (req, res) => {
   API
     .getInstance(req.prismic)
-    .fetchWork(req.params.uid)
-    .then((project) => {
+    .fetchAllProjects({ pageSize: 100 })
+    .then(({ projectsRaw }) => {
+      const project = projectsRaw.find(({ uid }) => uid === req.params.uid)
+      const projectIndex = projectsRaw.findIndex(({ uid }) => uid === req.params.uid)
+
+      let prevProjectIdx
+      let nextProjectIdx
+      
+      if (projectIndex > 0) {
+        prevProjectIdx = projectIndex - 1
+      } else {
+        prevProjectIdx = projectsRaw.length - 1
+      }
+
+      if (projectIndex < projectsRaw.length - 1) {
+        nextProjectIdx = projectIndex + 1
+      } else {
+        nextProjectIdx = 0
+      }
+
+      const prevProjectUID = projectsRaw[prevProjectIdx].uid
+      const nextProjectUID = projectsRaw[nextProjectIdx].uid
+
+      const prevProjectName = projectsRaw[prevProjectIdx].data.project_title[0].text
+      const nextProjectName = projectsRaw[nextProjectIdx].data.project_title[0].text
+
+      console.log(prevProjectUID, nextProjectUID)
+
       res.render('single', {
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
         project,
+        prevProjectLink: `/project/${prevProjectUID}`,
+        nextProjectLink: `/project/${nextProjectUID}`,
+        prevProjectName,
+        nextProjectName,
       });
     });
 });
