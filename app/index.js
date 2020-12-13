@@ -4,6 +4,7 @@ import './style.scss'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import glsl from 'highlight.js/lib/languages/glsl'
+import mediumZoom from 'medium-zoom'
 
 import 'highlight.js/styles/codepen-embed.css';
 
@@ -16,13 +17,29 @@ function init () {
   if (document.body.classList.contains('homepage')) {
     initHome()
   } else if (document.body.classList.contains('single-blog')) {
-    initSingle()
+    initSingleBlog()
+  } else if (document.body.classList.contains('single-work')) {
+    initSingleWork()
   }
 }
 
-function initSingle () {
+function initSingleWork () {
+  const allImages = document.querySelectorAll('.single-work img')
+  mediumZoom(allImages, {
+    container: {
+      width: innerWidth,
+      height: innerHeight,
+      top: 32,
+      bottom: 32,
+      right: 0,
+      left: 0,
+    }
+  })
+}
+
+function initSingleBlog () {
+
   const allSnippets = document.querySelectorAll('.single-blog-main pre')
-  // debugger
   for (let i = 0; i < allSnippets.length; i++) {
     const snippet = allSnippets[i]
     if (snippet.classList.contains('inline-pre')) {
