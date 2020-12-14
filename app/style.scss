@@ -15,6 +15,9 @@ p, li {
   line-height: 1.6rem;
   color: rgba(black, 0.76);
 }
+p:empty {
+  min-height: 1.6rem;
+}
 
 li {
   margin-bottom: 1rem;
@@ -57,7 +60,8 @@ img {
 
 .block-img {
   img {
-    // width: 100%;
+    display: block;
+    margin: 0 auto;
   }
 }
 
