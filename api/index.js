@@ -12,6 +12,7 @@ const API = require('./API')
 
 const {
   getPageTitle,
+  decodeHTMLEntities,
 } = require('./helpers')
 
 const PORT = app.get('port')
@@ -32,25 +33,6 @@ const htmlSerializer = (type, element, content, children) => {
     const lang = renderedChildren.substring(0, renderedChildren.indexOf('*'))
     return `<pre><code class="${lang}">${renderedChildren.substring(renderedChildren.indexOf('*') + 7)}</code></pre>`
   } else if (type === Elements.paragraph) {
-    var entities = {
-      'amp': '&',
-      'apos': '\'',
-      '#x27': '\'',
-      '#x2F': '/',
-      '#39': '\'',
-      '#47': '/',
-      'lt': '<',
-      'gt': '>',
-      'nbsp': ' ',
-      'quot': '"'
-    }
-    
-    function decodeHTMLEntities (text) {
-      return text.replace(/&([^]+)/gm, function (match, entity) {
-        return entities[entity] || match
-      })
-    }
-
     return `<p>${decodeHTMLEntities(children.join(''))}</p>`
   } else {
     return null
