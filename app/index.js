@@ -102,8 +102,12 @@ function initHome () {
     const imageWrapper = workEl.getElementsByClassName('preview-image-wrapper')[0]
     const makeImage = () => {
       const img = document.createElement('img')
+      img.classList.add('project-preview-image')
       img.setAttribute('src', imageSrc)
       img.setAttribute('alt', imageAlt)
+      requestAnimationFrame(() => {
+        img.classList.add('inView')
+      })
       imageWrapper.appendChild(img)
     }
     if (imageSrc) {

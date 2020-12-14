@@ -148,6 +148,14 @@ img {
   }
 }
 
+.project-preview-image {
+  opacity: 0;
+  transition: opacity 0.15s ease-in;
+  &.inView {
+    opacity: 1;
+  }
+}
+
 .preview-title {
   margin-bottom: 0
 }
@@ -306,3 +314,5 @@ img {
     height: 100% !important;
   }
 }
+
+
