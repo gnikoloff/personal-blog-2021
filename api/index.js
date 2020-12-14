@@ -14,8 +14,9 @@ const {
   getPageTitle,
 } = require('./helpers');
 
-const PORT = app.get('port');
-const WEBSITE_FULL_URL = 'https://archive.georgi-nikolov.com';
+const PORT = app.get('port')
+const WEBSITE_FULL_URL = 'https://archive.georgi-nikolov.com'
+const Elements = PrismicDOM.RichText.Elements
 
 let sitemap;
 
@@ -23,6 +24,37 @@ if (process.env.ENVIRONMENT === 'development') {
   app.listen(PORT, () => {
     process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`);
   });
+}
+
+const htmlSerializer = (type, element, content, children) => {
+  if (type === Elements.preformatted) {
+    const renderedChildren = children.join('')
+    const lang = renderedChildren.substring(0, renderedChildren.indexOf('*'))
+    return `<pre><code class="${lang}">${renderedChildren.substring(renderedChildren.indexOf('*') + 7)}</code></pre>`
+  } else if (type === Elements.paragraph) {
+    var entities = {
+      'amp': '&',
+      'apos': '\'',
+      '#x27': '\'',
+      '#x2F': '/',
+      '#39': '\'',
+      '#47': '/',
+      'lt': '<',
+      'gt': '>',
+      'nbsp': ' ',
+      'quot': '"'
+    }
+    
+    function decodeHTMLEntities (text) {
+      return text.replace(/&([^;]+);/gm, function (match, entity) {
+        return entities[entity] || match
+      })
+    }
+
+    return `<p>${decodeHTMLEntities(children.join(''))}</p>`
+  } else {
+    return null
+  }
 }
 
 // Middleware to inject prismic context
@@ -85,8 +117,6 @@ app.get('/project/:uid', (req, res) => {
       const prevProjectName = projectsRaw[prevProjectIdx].data.project_title[0].text
       const nextProjectName = projectsRaw[nextProjectIdx].data.project_title[0].text
 
-      console.log(prevProjectUID, nextProjectUID)
-
       res.render('single', {
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
@@ -95,7 +125,8 @@ app.get('/project/:uid', (req, res) => {
         nextProjectLink: `/project/${nextProjectUID}`,
         prevProjectName,
         nextProjectName,
-      });
+        htmlSerializer,
+      })
     });
 });
 

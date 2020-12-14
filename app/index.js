@@ -2,12 +2,16 @@ import 'normalize.css'
 import './style.scss'
 
 import hljs from 'highlight.js/lib/core'
+
+import xml from 'highlight.js/lib/languages/xml'
 import javascript from 'highlight.js/lib/languages/javascript'
 import glsl from 'highlight.js/lib/languages/glsl'
+
 import mediumZoom from 'medium-zoom'
 
 import 'highlight.js/styles/codepen-embed.css';
 
+hljs.registerLanguage('xml', xml)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('glsl', glsl)
 
@@ -34,6 +38,10 @@ function initSingleWork () {
       right: 0,
       left: 0,
     }
+  })
+
+  document.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightBlock(block)
   })
 }
 
