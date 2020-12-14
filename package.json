@@ -21,7 +21,7 @@
     "method-override": "~2.3.10",
     "node-cache": "^5.1.2",
     "normalize.css": "^8.0.1",
-    "prismic-dom": "^2.0.6",
+    "prismic-dom": "^2.2.4",
     "prismic-javascript": "~1.4.0",
     "pug": "^2.0.4",
     "request": "~2.83.0",
