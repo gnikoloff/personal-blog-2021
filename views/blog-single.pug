@@ -5,11 +5,11 @@ html
     .container
       include nav.pug
       .single-blog-title
-        div !{PrismicDOM.RichText.asHtml(project.data.title, linkResolver)}
+        div !{PrismicDOM.RichText.asHtml(project.data.title, null, htmlSerializer)}
         div #{formattedDate}
       
       main.single-blog-main
-        article !{PrismicDOM.RichText.asHtml(project.data.body, linkResolver)}
+        article !{PrismicDOM.RichText.asHtml(project.data.body, null, htmlSerializer)}
       //-   h1 !{project.data.project_title[0].text}
       //-   h5.preview-year !{project.data.project_year[0].text}  
       //- h5.preview-type !{project.data.project_type[0].text}

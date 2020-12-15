@@ -31,9 +31,13 @@ const htmlSerializer = (type, element, content, children) => {
   if (type === Elements.preformatted) {
     const renderedChildren = children.join('')
     const lang = renderedChildren.substring(0, renderedChildren.indexOf('*'))
-    return `<pre><code class="${lang}">${renderedChildren.substring(renderedChildren.indexOf('*') + 7)}</code></pre>`
+    return `<pre><code class="${lang}">${renderedChildren.substring(renderedChildren.indexOf('*') + 1)}</code></pre>`
   } else if (type === Elements.paragraph) {
     return `<p>${decodeHTMLEntities(children.join(''))}</p>`
+  } else if (type === Elements.listItem) {
+    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
+  } else if (type === Elements.oListItem) {
+    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
   } else {
     return null
   }
@@ -143,7 +147,8 @@ app.get('/blog/:uid', (req, res) => {
     .then((articlePage) => {
       const pageData = {
         seoDescription: articlePage.project.data.seo_description,
-        ...articlePage
+        ...articlePage,
+        htmlSerializer,
       }
       res.render('blog-single', pageData)
     })

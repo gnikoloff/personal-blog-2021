@@ -46,51 +46,9 @@ function initSingleWork () {
 }
 
 function initSingleBlog () {
-
-  const allSnippets = document.querySelectorAll('.single-blog-main pre')
-  for (let i = 0; i < allSnippets.length; i++) {
-    const snippet = allSnippets[i]
-    if (snippet.classList.contains('inline-pre')) {
-      continue
-    }
-
-    // hljs.highlightBlock(snippet)
-    snippet.style.opacity = '0'
-    let newSnippetHTML = ''
-    console.log(snippet.children)
-    for (let i = 0; i < snippet.children.length; i++) {
-      const node = snippet.children[i]
-      const nodeName = node.nodeName
-      console.log(node.innerHTML)
-      // if (nodeName === 'P') {
-        if (!node.innerHTML.trim().length) {
-          // node.parentNode.removeChild(node)
-        }
-        const nodeText = node.innerHTML.trim()
-        // console.log(node.innerHTML)
-        if (nodeText.startsWith('// ')) {
-          newSnippetHTML += `${nodeText}\n`
-        } else {
-          newSnippetHTML += `${nodeText}\n`
-        }
-        if (node.parentNode) {
-          node.parentNode.removeChild(node)
-        }
-      // }
-    }
-    const codeTag = document.createElement('code')
-    codeTag.innerHTML = `
-      <pre>
-        ${newSnippetHTML}
-      </pre>
-    `
-    // console.log(codeTag)
-    snippet.replaceWith(codeTag)
-    setTimeout(() => {
-      // hljs.highlightBlock(codeTag);
-      snippet.style.opacity = '1'
-    }, 0)
-  }
+  document.querySelectorAll('pre code').forEach((block) => {
+    hljs.highlightBlock(block)
+  })
 }
 
 function initHome () {
