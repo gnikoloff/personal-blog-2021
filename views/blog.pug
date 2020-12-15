@@ -12,7 +12,7 @@ html
       ol.blog-wrapper
         each project in projects
           li
-            article
+            article.article-preview
               a(href=`/blog/${project.uid}`)
                 div !{PrismicDOM.RichText.asHtml(project.data.title, linkResolver)}
               h5 !{project.formattedDate}

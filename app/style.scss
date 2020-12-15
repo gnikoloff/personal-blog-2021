@@ -254,10 +254,10 @@ img {
   align-items: center;
 }
 
-// .back-link {
-//   margin-top: 5rem;
-//   display: block;
-// }
+.back-link {
+  margin-top: 5rem;
+  display: block;
+}
 
 .about-wrapper {
   @media (min-width: 600px) {
@@ -282,6 +282,12 @@ img {
   }
   h5 {
     margin-top: -0.75rem;
+  }
+}
+
+.article-preview {
+  h5 {
+    margin-top: 1.125rem;
   }
 }
 
