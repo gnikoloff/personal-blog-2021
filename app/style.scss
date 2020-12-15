@@ -6,10 +6,10 @@ body {
   padding: 5rem 0;
 }
 
-ul {
-  padding: 0;
-  margin: 0;
-}
+// ul {
+//   padding: 0;
+//   margin: 0;
+// }
 
 p, li {
   line-height: 1.6rem;
@@ -20,7 +20,7 @@ p, li {
 // }
 
 li {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -108,6 +108,7 @@ img {
 }
 
 .nav {
+  padding-left: 0;
   margin-bottom: 4rem;
   li {
     display: inline-block;
@@ -227,6 +228,7 @@ img {
 }
 
 .social {
+  padding-left: 0;
   li {
     display: inline-block;
     list-style: none;
