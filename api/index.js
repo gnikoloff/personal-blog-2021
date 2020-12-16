@@ -186,7 +186,7 @@ app.get('/sitemap.xml', (req, res) => {
 
     Promise.all([
       APIInstance.fetchBlog({ pageSize: 50 }),
-      APIInstance.fetchHomepage({ pageSize: 50 }),
+      APIInstance.fetchAllProjects({ pageSize: 100 })
     ]).then((responses) => {
       const blogPorts = responses[0] ? responses[0] : []
 
@@ -229,7 +229,7 @@ app.get('/feed.rss', (req, res) => {
   const APIInstance = API.getInstance(req.prismic)
   Promise.all([
     APIInstance.fetchBlog({ pageSize: 50 }),
-    APIInstance.fetchHomepage({ pageSize: 50 }),
+    APIInstance.fetchAllProjects({ pageSize: 100 })
   ]).then((responses) => {
     const blogPorts = responses[0] ? responses[0] : []
     const posts = responses[1] ? responses[1] : {}
