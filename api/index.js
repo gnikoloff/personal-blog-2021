@@ -5,6 +5,7 @@ const { SitemapStream, streamToPromise } = require('sitemap')
 const { createGzip } = require('zlib')
 const { Readable } = require('stream')
 const rfc822Date = require('rfc822-date')
+const cache = require('memory-cache')
 
 const PrismicConfig = require('../prismic-configuration')
 const app = require('../config')
@@ -15,9 +16,29 @@ const {
   decodeHTMLEntities,
 } = require('./helpers')
 
+const CACHE_TIMEOUT = 60 * 10
 const PORT = app.get('port')
 const WEBSITE_FULL_URL = 'https://archive.georgi-nikolov.com'
 const Elements = PrismicDOM.RichText.Elements
+
+const memCache = new cache.Cache()
+const cacheMiddleware = (duration) => {
+  return (req, res, next) => {
+    let key =  '__express__' + req.originalUrl || req.url
+    let cacheContent = memCache.get(key)
+    if (cacheContent) {
+      res.send(cacheContent)
+      return
+    } else {
+      res.sendResponse = res.send
+      res.send = (body) => {
+        memCache.put(key, body, duration * 1000)
+        res.sendResponse(body)
+      }
+      next()
+    }
+  }
+}
 
 let sitemap
 
@@ -62,7 +83,7 @@ app.use((req, res, next) => {
   })
 })
 
-app.get('/', (req, res) => {
+app.get('/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchAllProjects({ pageSize: 100 })
@@ -74,7 +95,7 @@ app.get('/', (req, res) => {
     })
 })
 
-app.get('/project/:uid', (req, res) => {
+app.get('/project/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchAllProjects({ pageSize: 100 })
@@ -116,7 +137,7 @@ app.get('/project/:uid', (req, res) => {
     })
 })
 
-app.get('/about', (req, res) => {
+app.get('/about', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchAboutPage()
@@ -128,7 +149,7 @@ app.get('/about', (req, res) => {
     })
 })
 
-app.get('/blog', (req, res) => {
+app.get('/blog', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchBlog({ pageSize: 100 })
@@ -140,7 +161,7 @@ app.get('/blog', (req, res) => {
     })
 })
 
-app.get('/blog/:uid', (req, res) => {
+app.get('/blog/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchArticle(req.params.uid)
@@ -154,7 +175,7 @@ app.get('/blog/:uid', (req, res) => {
     })
 })
 
-app.get('/sitemap.xml', (req, res) => {
+app.get('/sitemap.xml', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   res.header('Content-Type', 'application/xml')
   res.header('Content-Encoding', 'gzip')
   // if we have a cached entry send it
@@ -225,7 +246,7 @@ app.get('/sitemap.xml', (req, res) => {
   }
 })
 
-app.get('/feed.rss', (req, res) => {
+app.get('/feed.rss', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   const APIInstance = API.getInstance(req.prismic)
   Promise.all([
     APIInstance.fetchBlog({ pageSize: 50 }),
