@@ -6,7 +6,6 @@ const { createGzip } = require('zlib')
 const { Readable } = require('stream')
 const rfc822Date = require('rfc822-date')
 const cache = require('memory-cache')
-const basicAuth = require('express-basic-auth')
 
 const PrismicConfig = require('../prismic-configuration')
 const app = require('../config')
@@ -96,10 +95,7 @@ app.get('/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
 })
 
-app.get('/project/:uid', basicAuth({
-    users: { 'tester3000': 'dasdasdas' },
-    challenge: true,
-}), cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/project/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API
     .getInstance(req.prismic)
     .fetchAllProjects({ pageSize: 100 })
