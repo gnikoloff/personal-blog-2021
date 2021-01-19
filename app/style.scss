@@ -280,6 +280,7 @@ img {
   line-height: 3rem;
   padding-left: 0;
   h1 {
+    line-height: 1.25;
     margin-bottom: 0;
   }
   h5 {
@@ -340,8 +341,11 @@ img {
   height: 0;
   padding-top: 75%;
   overflow: hidden;
-  margin-left: calc(-100vw / 2 + 420px);
-  margin-right: calc(-100vw / 2 + 420px);
+  @media (min-width: 720px) {
+    margin-left: calc(-100vw / 2 + 420px);
+    margin-right: calc(-100vw / 2 + 420px);
+  }
+
   iframe {
     position: absolute;
     top: 0 !important;
