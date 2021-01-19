@@ -22,8 +22,8 @@ module.exports = {
       }
       return numberFormat;
     };
-    const day = formatNumber(date.getDay());
-    const month = formatNumber(date.getMonth());
+    const day = formatNumber(date.getDate());
+    const month = formatNumber(date.getMonth() + 1);
     const year = formatNumber(date.getFullYear());
 
     return `${day}.${month}.${year}`;
