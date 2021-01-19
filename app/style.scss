@@ -2,7 +2,7 @@
 
 body {
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
-
+  fill: currentColor;
   padding: 5rem 0;
 }
 
@@ -288,8 +288,36 @@ img {
 }
 
 .article-preview {
+  svg {
+    path {
+      fill: blue;
+    }
+  }
+  a:visited {
+    svg {
+      path {
+        fill: purple;
+      }
+    }
+  }
+}
+
+.article-preview-footer {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
   h5 {
-    margin-top: 1.125rem;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 16px;
+  }
+}
+
+.external-resource-name {
+  display: flex;
+  align-items: center;
+  h5 {
+    margin-left: 6px;
   }
 }
 

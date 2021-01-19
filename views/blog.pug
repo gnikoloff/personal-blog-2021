@@ -13,9 +13,27 @@ html
         each project in projects
           li
             article.article-preview
-              a(href=`/blog/${project.uid}`)
+              a(
+                href=project.data.external_link.url ? project.data.external_link.url : `/blog/${project.uid}`
+                target=project.data.external_link.url ? '_blank' : '_self'
+                rel=project.data.external_link.url ? 'noopener noreferrer' : ''
+              )
                 div !{PrismicDOM.RichText.asHtml(project.data.title, linkResolver)}
-              h5 !{project.formattedDate}
+                footer.article-preview-footer
+                  h5 !{project.formattedDate}
+                  if project.data.external_resource_name[0]
+                    div.external-resource-name
+                      svg(
+                        xmlns="http://www.w3.org/2000/svg"
+                        version="1.1"
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                      )
+                        path(
+                          d="M19 6.41L8.7 16.71a1 1 0 1 1-1.4-1.42L17.58 5H14a1 1 0 0 1 0-2h6a1 1 0 0 1 1 1v6a1 1 0 0 1-2 0V6.41zM17 14a1 1 0 0 1 2 0v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7c0-1.1.9-2 2-2h5a1 1 0 0 1 0 2H5v12h12v-5z"
+                        )
+                      h5 !{project.data.external_resource_name[0].text}
               
   include footer.pug
   
