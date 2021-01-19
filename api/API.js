@@ -94,7 +94,7 @@ class API {
         formattedDate: getFormattedDate(date),
         project,
       }
-      this._cache.set(uid, articlePge)
+      // this._cache.set(uid, articlePge)
       return articlePge
     })
   }
