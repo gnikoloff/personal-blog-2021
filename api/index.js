@@ -86,7 +86,10 @@ app.use((req, res, next) => {
 
 app.get("/", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
-    .fetchAllProjects({ pageSize: 100 })
+    .fetchAllProjects({
+      pageSize: 100,
+      orderings: "[document.last_publication_date desc]",
+    })
     .then(({ projects }) => {
       res.render("body", {
         title: getPageTitle("Home"),
@@ -97,7 +100,9 @@ app.get("/", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 
 app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
-    .fetchAllProjects({ pageSize: 100 })
+    .fetchAllProjects({
+      pageSize: 100,
+    })
     .then(({ projectsRaw }) => {
       const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
       const projectIndex = projectsRaw.findIndex(
