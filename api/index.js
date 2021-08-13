@@ -92,6 +92,7 @@ app.get("/", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
     .then(({ projects }) => {
       res.render("body", {
+        baseProjectPath: 'project',
         title: getPageTitle("Home"),
         projects,
       });
@@ -133,11 +134,60 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         projectsRaw[nextProjectIdx].data.project_title[0].text;
 
       res.render("single", {
+
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
         project,
         prevProjectLink: `/project/${prevProjectUID}`,
         nextProjectLink: `/project/${nextProjectUID}`,
+        prevProjectName,
+        nextProjectName,
+        htmlSerializer,
+      });
+    });
+});
+
+app.get("/speaking/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  API.getInstance(req.prismic)
+    .fetchAllProjects({
+      pageSize: 100,
+    }, 'speaking')
+    .then(({ projectsRaw }) => {
+      const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
+      const projectIndex = projectsRaw.findIndex(
+        ({ uid }) => uid === req.params.uid
+      );
+
+      let prevProjectIdx;
+      let nextProjectIdx;
+
+      if (projectIndex > 0) {
+        prevProjectIdx = projectIndex - 1;
+      } else {
+        prevProjectIdx = projectsRaw.length - 1;
+      }
+
+      if (projectIndex < projectsRaw.length - 1) {
+        nextProjectIdx = projectIndex + 1;
+      } else {
+        nextProjectIdx = 0;
+      }
+
+      const prevProjectUID = projectsRaw[prevProjectIdx].uid;
+      const nextProjectUID = projectsRaw[nextProjectIdx].uid;
+
+      const prevProjectName =
+        projectsRaw[prevProjectIdx].data.project_title[0].text;
+      const nextProjectName =
+        projectsRaw[nextProjectIdx].data.project_title[0].text;
+
+      res.render("single", {
+
+        seoDescription: project.data.seo_description,
+        title: getPageTitle(project.data.project_title[0].text),
+        project,
+        prevProjectLink: `/speaking/${prevProjectUID}`,
+        nextProjectLink: `/speaking/${nextProjectUID}`,
         prevProjectName,
         nextProjectName,
         htmlSerializer,
@@ -155,6 +205,22 @@ app.get("/about", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
       });
     });
 });
+
+app.get("/speaking", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  API.getInstance(req.prismic)
+    .fetchAllProjects({
+      pageSize: 100,
+      orderings: "[document.last_publication_date desc]",
+    }, 'speaking')
+    .then(({ projects }) => {
+      res.render("body", {
+        baseProjectPath: 'speaking',
+        title: getPageTitle("Speaking"),
+        projects: projects,
+      });
+    });
+});
+
 
 app.get("/blog", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
@@ -215,7 +281,7 @@ app.get("/sitemap.xml", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 
     Promise.all([
       APIInstance.fetchBlog({ pageSize: 50 }),
-      APIInstance.fetchAllProjects({ pageSize: 100 }),
+      APIInstance.fetchAllProjects({ pageSize: 100 }, 'work'),
     ]).then((responses) => {
       const blogPorts = responses[0] ? responses[0] : [];
 

@@ -4,9 +4,7 @@ html
   body.homepage
     .container
       include nav.pug
-      .hero
-        h1.logo Georgi Nikolov
-        h2.title Frontend Developer
+      include logo.pug
       each year in Object.keys(projects).sort((a, b) => parseInt(b) - parseInt(a))
         article.year-wrapper
           h2.year-title #{year}
@@ -16,7 +14,7 @@ html
                   data-image=project.data.project_image.url
                   data-alt=project.data.project_image.alt
                 )
-                a(href=`/project/${project.uid}`)
+                a(href=`/${baseProjectPath}/${project.uid}`)
                   div.preview-image-wrapper
                   h3.preview-title !{project.data.project_title[0].text}
                   h5.preview-type !{project.data.project_type[0].text}

@@ -23,12 +23,8 @@ class API {
     this._Prismic = Prismic
     // this._cache = new NodeCache({ stdTTL: 100, checkperiod: 60 * 30 })
   }
-  fetchAllProjects(opts) {
-    // const homepage = this._cache.get(HOMEPAGE_CACHE_KEY)
-    // if (homepage) {
-    //   return Promise.resolve(homepage)
-    // }
-    return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'work'), opts)
+  fetchAllProjects(opts, projectType = 'work') {
+    return this._Prismic.api.query(Prismic.Predicates.at('document.type', projectType), opts)
       .then((response) => {
         const projects = (response.results || []).reduce((acc, item, i) => {
           const projectYear = parseInt(item.data.project_year[0].text, 10)
@@ -43,19 +39,15 @@ class API {
           return acc
         }, {})
         const projectsRaw = (response.results || []).sort((a, b) => parseInt(b.data.project_year[0].text, 10) - parseInt(a.data.project_year[0].text, 10))
-        const homepageData = {
+        const data = {
           projects,
           projectsRaw,
         }
-        // this._cache.set(HOMEPAGE_CACHE_KEY, homepageData)
-        return homepageData
+        return data
       })
   }
+  
   fetchAboutPage() {
-    // const aboutPage = this._cache.get(ABOUT_CACHE_KEY)
-    // if (aboutPage && process.env.ENVIRONMENT !== 'development') {
-    //   return Promise.resolve(aboutPage)
-    // }
     return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'about')).then((response) => {
       const document = response.results[0]
       // this._cache.set(ABOUT_CACHE_KEY, document)
