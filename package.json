@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "start-server": "node api/index.js",
-    "dev-server": "ENVIRONMENT=development nodemon api/index.js",
+    "dev-server": "ENVIRONMENT=development nodemon --trace-warnings --inspect api/index.js",
     "watch": "parcel watch app/index.js",
     "build": "parcel build app/index.js",
-    "start-dev": "npm-run-all --parallel dev-server watch",
+    "start:dev": "npm-run-all --parallel dev-server watch",
     "start": "npm-run-all --parallel build start-server"
   },
   "dependencies": {
