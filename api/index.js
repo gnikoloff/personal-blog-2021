@@ -16,6 +16,9 @@ const { getPageTitle, decodeHTMLEntities } = require("./helpers");
 const CACHE_TIMEOUT = 60 * 10;
 const PORT = app.get("port");
 const WEBSITE_FULL_URL = "https://archive.georgi-nikolov.com";
+const PROJECT_TYPE_WORK = 'work'
+const PROJECT_TYPE_SPEAKING = 'speaking'
+
 const Elements = PrismicDOM.RichText.Elements;
 
 const memCache = new cache.Cache();
@@ -92,6 +95,7 @@ app.get("/", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
     .then(({ projects }) => {
       res.render("body", {
+        activePage: 'home',
         baseProjectPath: 'project',
         title: getPageTitle("Home"),
         projects,
@@ -134,7 +138,7 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         projectsRaw[nextProjectIdx].data.project_title[0].text;
 
       res.render("single", {
-
+        activePage: 'home',
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
         project,
@@ -149,9 +153,7 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 
 app.get("/speaking/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
-    .fetchAllProjects({
-      pageSize: 100,
-    }, 'speaking')
+    .fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_SPEAKING)
     .then(({ projectsRaw }) => {
       const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
       const projectIndex = projectsRaw.findIndex(
@@ -182,7 +184,7 @@ app.get("/speaking/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         projectsRaw[nextProjectIdx].data.project_title[0].text;
 
       res.render("single", {
-
+        activePage: 'speaking',
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
         project,
@@ -200,6 +202,7 @@ app.get("/about", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     .fetchAboutPage()
     .then((document) => {
       res.render("about", {
+        activePage: 'about',
         title: getPageTitle("About"),
         document,
       });
@@ -208,12 +211,10 @@ app.get("/about", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 
 app.get("/speaking", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
-    .fetchAllProjects({
-      pageSize: 100,
-      orderings: "[document.last_publication_date desc]",
-    }, 'speaking')
+    .fetchAllProjects({ pageSize: 100, orderings: "[document.last_publication_date desc]" }, PROJECT_TYPE_SPEAKING)
     .then(({ projects }) => {
       res.render("body", {
+        activePage: 'speaking',
         baseProjectPath: 'speaking',
         title: getPageTitle("Speaking"),
         projects: projects,
@@ -230,6 +231,7 @@ app.get("/blog", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
     .then((projects) => {
       res.render("blog", {
+        activePage: 'blog',
         title: getPageTitle("Blog"),
         projects,
       });
@@ -241,6 +243,7 @@ app.get("/blog/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     .fetchArticle(req.params.uid)
     .then((articlePage) => {
       const pageData = {
+        activePage: 'blog',
         seoDescription: articlePage.project.data.seo_description,
         ...articlePage,
         htmlSerializer,
@@ -281,7 +284,7 @@ app.get("/sitemap.xml", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 
     Promise.all([
       APIInstance.fetchBlog({ pageSize: 50 }),
-      APIInstance.fetchAllProjects({ pageSize: 100 }, 'work'),
+      APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_WORK),
     ]).then((responses) => {
       const blogPorts = responses[0] ? responses[0] : [];
 
@@ -326,10 +329,11 @@ app.get("/feed.rss", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   const APIInstance = API.getInstance(req.prismic);
   Promise.all([
     APIInstance.fetchBlog({ pageSize: 50 }),
-    APIInstance.fetchAllProjects({ pageSize: 100 }),
+    APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_WORK),
+    APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_SPEAKING),
   ]).then((responses) => {
     const blogPorts = responses[0] ? responses[0] : [];
-    const posts = responses[1] ? responses[1] : {};
+    const posts = (responses[1] && responses[2]) ? {...responses[1], ...responses[2] } : {};
 
     const projects = posts.projectsRaw;
     const xmlObject = {

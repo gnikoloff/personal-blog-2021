@@ -107,13 +107,27 @@ img {
   margin-right: -12px;
 }
 
+.nav-outer {
+  overflow: auto;
+}
+
+.nav-inner {
+  white-space: pre;
+  width: fit-content;
+  padding: 0;
+}
+
 .nav {
   padding-left: 0;
-  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
   li {
     display: inline-block;
     list-style: none;
     margin-left: 24px;
+    &.active {
+      font-weight: 600;
+    }
     &:after {
       content: '/';
       position: relative;
