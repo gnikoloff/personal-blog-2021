@@ -107,6 +107,8 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAllProjects({
       pageSize: 100,
+      orderings: "[document.last_publication_date desc]",
+      
     })
     .then(({ projectsRaw }) => {
       const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
@@ -147,6 +149,22 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         prevProjectName,
         nextProjectName,
         htmlSerializer,
+      });
+    });
+});
+
+app.get("/speaking", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  API.getInstance(req.prismic)
+    .fetchAllProjects({
+      pageSize: 100,
+      orderings: "[document.last_publication_date desc]"
+    }, PROJECT_TYPE_SPEAKING)
+    .then(({ projects }) => {
+      res.render("body", {
+        activePage: 'speaking',
+        baseProjectPath: 'speaking',
+        title: getPageTitle("Speaking"),
+        projects: projects,
       });
     });
 });
@@ -208,20 +226,6 @@ app.get("/about", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
       });
     });
 });
-
-app.get("/speaking", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  API.getInstance(req.prismic)
-    .fetchAllProjects({ pageSize: 100, orderings: "[document.last_publication_date desc]" }, PROJECT_TYPE_SPEAKING)
-    .then(({ projects }) => {
-      res.render("body", {
-        activePage: 'speaking',
-        baseProjectPath: 'speaking',
-        title: getPageTitle("Speaking"),
-        projects: projects,
-      });
-    });
-});
-
 
 app.get("/blog", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
