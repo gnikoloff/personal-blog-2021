@@ -15,7 +15,7 @@ hljs.registerLanguage('xml', xml)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('glsl', glsl)
 
-const BACKEND_URL = 'http://localhost:3000'
+const BACKEND_URL = 'https://archive.georgi-nikolov.com'
 
 document.addEventListener('DOMContentLoaded', init)
 

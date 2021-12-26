@@ -4122,7 +4122,7 @@ _core.default.registerLanguage('javascript', _javascript.default);
 
 _core.default.registerLanguage('glsl', _glsl.default);
 
-var BACKEND_URL = 'http://localhost:3000';
+var BACKEND_URL = 'https://archive.georgi-nikolov.com';
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
