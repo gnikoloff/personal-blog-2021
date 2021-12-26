@@ -2,6 +2,8 @@ html
   include head.pug
 
   body.contact
+    .email-send-loader-wrapper
+      .email-send-loader
     .container
       include nav.pug
       .hero
@@ -35,32 +37,63 @@ html
             ) Dwitter
 
       div.contact-wrapper
-        form#contact-form
-          div.form-group
-            label(for="name") Name:
-            input.full-width.contact-input(name="Name" id="name" type="text" required)
-          div.form-group
-            label(for="email") Email:
-            input.full-width.contact-input(name="Email" id="email" type="email" required)
-          div.form-group
-            label(for="project-type") Inquiry type:
-            select.full-width.contact-input(name="Project Type" id="project-type" required) 
-              option(value="")
-              option(value="Project") Project
-              option(value="Collaboration") Collaboration
-          div.form-group#budget-group
-            label(for="budget") Budget:
-            div
-              input.contact-input(name="Budget" id="budget" type="number" min="0")
-              span &nbsp;USD
-          div.form-group
-            label(for="message") Message:
-            textarea.full-width.contact-input(name="Message" id="message" required)
-          div.form-group.inline-form-group
-            input.contact-input(name="agreement" id="agreement" type="checkbox" required)
-            label(for="agreement") Confirm I am not a recruiter
-          div.form-group
-            input.full-width.contact-input.submit-btn(type="submit" value="Send")
+        .contact-form-success
+          svg(
+            viewBox="0 0 32 32"
+            width="32"
+            height="32"
+            style="width: 64px; height: 64px;"
+            xmlns="http://www.w3.org/2000/svg"
+          )
+            defs
+              style.
+                .cls-1{fill: green;}
+            g
+              path.cls-1(
+                d="M16,31A15,15,0,1,1,31,16,15,15,0,0,1,16,31ZM16,3A13,13,0,1,0,29,16,13,13,0,0,0,16,3Z"
+              )
+              path.cls-1(
+                d="M13.67,22a1,1,0,0,1-.73-.32l-4.67-5a1,1,0,0,1,1.46-1.36l3.94,4.21,8.6-9.21a1,1,0,1,1,1.46,1.36l-9.33,10A1,1,0,0,1,13.67,22Z"
+              )
+            
+          h3 Thanks! Your message was successfuly received
+          p I will get back to you as soon as possible
+        .contact-form-wrapper
+          p I am available for freelance work, cool new projects and collaborations.
+          p Recruitment agencies and individuals - please do not bother writing.
+          p Do send me:
+            ul
+              li Money
+              li Job & Opportunity Offers
+              li Appreciation
+              li Love Letters
+
+          form#contact-form
+            div.form-group
+              label(for="name") Name:
+              input.full-width.contact-input(name="Name" id="name" type="text" required)
+            div.form-group
+              label(for="email") Email:
+              input.full-width.contact-input(name="Email" id="email" type="email" required)
+            div.form-group
+              label(for="project-type") Inquiry type:
+              select.full-width.contact-input(name="Project Type" id="project-type" required) 
+                option(value="")
+                option(value="Project") Project
+                option(value="Collaboration") Collaboration
+            div.form-group#budget-group
+              label(for="budget") Budget:
+              div
+                input.contact-input(name="Budget" id="budget" type="number" min="0")
+                span &nbsp;USD
+            div.form-group
+              label(for="message") Message:
+              textarea.full-width.contact-input(name="Message" id="message" required)
+            div.form-group.inline-form-group
+              input.contact-input(name="agreement" id="agreement" type="checkbox" required)
+              label(for="agreement") Confirm I am not a spammer, recruiter or work for a recruitment agency
+            div.form-group
+              input.full-width.contact-input.submit-btn(type="submit" value="Send")
 
         
       a(href="/").back-link Back

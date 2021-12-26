@@ -244,29 +244,38 @@ app.get('/contact', (req, res) => {
 })
 
 app.post('/contact', (req, res) => {
-  console.clear()
-  const msg = {
-    to: process.env.BUSINESS_EMAIL,
-    from: req.query['Email'],
-    subject: `Contact: ${req.query['Name']} WRT possible ${req.query['Project Type']}`,
-    html: `
-      <p>
-        Name: ${req.query['Name']}<br/>
-        Email: ${req.query['Email']}<br/>
-        Project Type: ${req.query['Project Type']}
-        ${
-          req.query['Project Type'] === 'Project'
-            ? `Budget: ${req.query['Budget']}<br/>`
-            : ''
-        }
-        Message:<br/>
-        ${req.query['Message']}
-
-      </p>
-    `,
-  }
   sgMail
-    .send(msg)
+    .send({
+      to: process.env.BUSINESS_EMAIL,
+      from: process.env.BUSINESS_EMAIL,
+      subject: `Contact: ${req.query['Name']} WRT possible ${req.query['Project Type']}`,
+      html: `
+      <div>
+        <p>
+          <strong>Name:</strong> ${req.query['Name']}
+        </p>
+        <p>
+          <strong>Email:</strong> ${req.query['Email']}<br/>
+        </p>
+        <p>
+          <strong>Project Type:</strong> ${req.query['Project Type']}<br/>
+        </p>
+          ${
+            req.query['Project Type'] === 'Project'
+              ? `<p>
+                  <strong>Budget:</strong> ${req.query['Budget']} USD
+                </p>`
+              : ''
+          }
+        <p>
+          <strong>Message:</strong><br/>
+          <span style="white-space: pre-line;">
+            ${req.query['Message'].trim()}
+          </span>
+        </p>
+      </div>
+    `,
+    })
     .then(() => {
       res.json({
         type: 'SUCCESS',

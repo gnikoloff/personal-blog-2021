@@ -15,7 +15,7 @@ hljs.registerLanguage('xml', xml)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('glsl', glsl)
 
-const BACKEND_URL = 'https://archive.georgi-nikolov.com'
+const BACKEND_URL = 'http://localhost:3000'
 
 document.addEventListener('DOMContentLoaded', init)
 
@@ -97,17 +97,45 @@ function initHome() {
 
 function initContact() {
   const form = document.getElementById('contact-form')
+  const emailLoadbar = document.querySelector('.email-send-loader-wrapper')
+
   form.addEventListener('submit', (e) => {
     e.preventDefault()
     const formData = new FormData(form)
     const formParams = new URLSearchParams(formData).toString()
+    emailLoadbar.classList.add('visible')
     fetch(`${BACKEND_URL}/contact?${formParams}`, {
       method: 'POST',
     })
       .then((res) => res.json())
       .then((res) => {
+        emailLoadbar.classList.remove('visible')
+        const inputs = form.getElementsByTagName('input')
+        for (let i = 0; i < inputs.length; i++) {
+          if (inputs[i].getAttribute('type') !== 'submit') {
+            inputs[i].value = ''
+          }
+        }
+        const textarea = form.getElementsByTagName('textarea')
+        for (let i = 0; i < textarea.length; i++) {
+          textarea[i].value = ''
+        }
+
         if (res.type === 'ERROR') {
           console.error(JSON.parse(res.payload))
+        } else {
+          const formSuccess = document.getElementsByClassName(
+            'contact-form-success',
+          )[0]
+          const formWrapper = document.getElementsByClassName(
+            'contact-form-wrapper',
+          )[0]
+          formSuccess.style.setProperty('display', 'block')
+          formWrapper.style.setProperty('display', 'none')
+          setTimeout(() => {
+            formSuccess.style.removeProperty('display')
+            formWrapper.style.removeProperty('display')
+          }, 8 * 1000)
         }
       })
   })

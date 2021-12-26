@@ -400,6 +400,7 @@ img {
     border: none;
     background: #111;
     color: #fff;
+    cursor: pointer;
   }
 }
 
@@ -429,4 +430,43 @@ img {
 
 #budget {
   max-width: 108px;
+}
+
+.email-send-loader-wrapper {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  &.visible {
+    opacity: 1;
+  }
+}
+
+.email-send-loader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 10px;
+  background: #111;
+  animation: load-send-email 1s infinite ease-in-out;
+}
+
+@keyframes load-send-email {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+#contact-form {
+  margin-top: 3rem;
+}
+
+.contact-form-success {
+  display: none;
+  text-align: center;
 }
