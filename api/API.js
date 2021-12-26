@@ -1,10 +1,7 @@
 const Prismic = require('prismic-javascript')
 // const NodeCache = require('node-cache')
 
-const {
-  getFormattedDate,
-  getPageTitle,
-} = require('./helpers')
+const { getFormattedDate, getPageTitle } = require('./helpers')
 
 const HOMEPAGE_CACHE_KEY = 'homepage'
 const ABOUT_CACHE_KEY = 'about'
@@ -24,21 +21,23 @@ class API {
     // this._cache = new NodeCache({ stdTTL: 100, checkperiod: 60 * 30 })
   }
   fetchAllProjects(opts, projectType = 'work') {
-    return this._Prismic.api.query(Prismic.Predicates.at('document.type', projectType), opts)
+    return this._Prismic.api
+      .query(Prismic.Predicates.at('document.type', projectType), opts)
       .then((response) => {
         const projects = (response.results || []).reduce((acc, item, i) => {
           const projectYear = parseInt(item.data.project_year[0].text, 10)
           if (!acc[projectYear]) {
             acc[projectYear] = [item]
           } else {
-            acc[projectYear] = [
-              ...acc[projectYear],
-              item,
-            ]
+            acc[projectYear] = [...acc[projectYear], item]
           }
           return acc
         }, {})
-        const projectsRaw = (response.results || []).sort((a, b) => parseInt(b.data.project_year[0].text, 10) - parseInt(a.data.project_year[0].text, 10))
+        const projectsRaw = (response.results || []).sort(
+          (a, b) =>
+            parseInt(b.data.project_year[0].text, 10) -
+            parseInt(a.data.project_year[0].text, 10),
+        )
         const data = {
           projects,
           projectsRaw,
@@ -46,33 +45,37 @@ class API {
         return data
       })
   }
-  
-  fetchAboutPage() {
-    return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'about')).then((response) => {
-      const document = response.results[0]
-      // this._cache.set(ABOUT_CACHE_KEY, document)
 
-      return document
-    })
+  fetchAboutPage() {
+    return this._Prismic.api
+      .query(Prismic.Predicates.at('document.type', 'about'))
+      .then((response) => {
+        const document = response.results[0]
+        // this._cache.set(ABOUT_CACHE_KEY, document)
+
+        return document
+      })
   }
   fetchBlog(opts) {
     // const aboutPage = this._cache.get(BLOG_CACHE_KEY)
     // if (aboutPage && process.env.ENVIRONMENT !== 'development') {
     //   return Promise.resolve(aboutPage)
     // }
-    return this._Prismic.api.query(Prismic.Predicates.at('document.type', 'blog'), opts).then((response) => {
-      const projects = (response.results || []).map((project) => {
-        const date = new Date(project.first_publication_date)
-        const blogPage = {
-          ...project,
-          formattedDate: getFormattedDate(date),
-        }
-        return blogPage
-      })
+    return this._Prismic.api
+      .query(Prismic.Predicates.at('document.type', 'blog'), opts)
+      .then((response) => {
+        const projects = (response.results || []).map((project) => {
+          const date = new Date(project.first_publication_date)
+          const blogPage = {
+            ...project,
+            formattedDate: getFormattedDate(date),
+          }
+          return blogPage
+        })
 
-      // this._cache.set(BLOG_CACHE_KEY, projects)
-      return projects
-    })
+        // this._cache.set(BLOG_CACHE_KEY, projects)
+        return projects
+      })
   }
   fetchArticle(uid) {
     // const articlePge = this._cache.get(uid)

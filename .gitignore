@@ -128,3 +128,4 @@ jspm_packages
 dist
 .cache
 .vercel
+.env

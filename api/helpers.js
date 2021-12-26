@@ -1,54 +1,57 @@
 const HTML_ENTITIES = {
-  'amp': '&',
-  'apos': '\'',
-  '#x27': '\'',
+  amp: '&',
+  apos: "'",
+  '#x27': "'",
   '#x2F': '/',
-  '#39': '\'',
+  '#39': "'",
   '#47': '/',
-  'lt': '<',
-  'gt': '>',
-  'nbsp': ' ',
-  'quot': '"'
+  lt: '<',
+  gt: '>',
+  nbsp: ' ',
+  quot: '"',
 }
 
 module.exports = {
   getFormattedDate: (date) => {
     const formatNumber = (number) => {
-      let numberFormat;
+      let numberFormat
       if (number < 10) {
-        numberFormat = `0${number}`;
+        numberFormat = `0${number}`
       } else {
-        numberFormat = number.toString();
+        numberFormat = number.toString()
       }
-      return numberFormat;
-    };
-    const day = formatNumber(date.getDate());
-    const month = formatNumber(date.getMonth() + 1);
-    const year = formatNumber(date.getFullYear());
+      return numberFormat
+    }
+    const day = formatNumber(date.getDate())
+    const month = formatNumber(date.getMonth() + 1)
+    const year = formatNumber(date.getFullYear())
 
-    return `${day}.${month}.${year}`;
+    return `${day}.${month}.${year}`
   },
 
-  decodeHTMLEntities: text => {
+  decodeHTMLEntities: (text) => {
     var entities = [
       ['amp', '&'],
-      ['apos', '\''],
-      ['#x27', '\''],
+      ['apos', "'"],
+      ['#x27', "'"],
       ['#x2F', '/'],
-      ['#39', '\''],
+      ['#39', "'"],
       ['#47', '/'],
       ['lt', '<'],
       ['gt', '>'],
       ['nbsp', ' '],
-      ['quot', '"']
+      ['quot', '"'],
     ]
 
     for (var i = 0, max = entities.length; i < max; ++i) {
-      text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1])
+      text = text.replace(
+        new RegExp('&' + entities[i][0] + ';', 'g'),
+        entities[i][1],
+      )
     }
 
     return text
   },
 
-  getPageTitle: title => `${title} | Georgi Nikolov`,
-};
+  getPageTitle: (title) => `${title} | Georgi Nikolov`,
+}

@@ -11,15 +11,18 @@
     "start": "npm-run-all --parallel build start-server"
   },
   "dependencies": {
+    "@sendgrid/mail": "^7.6.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.4",
     "debug": "~3.1.0",
+    "dotenv": "^10.0.0",
     "errorhandler": "^1.5.1",
     "express": "^4.16.4",
     "highlight.js": "^10.4.1",
     "medium-zoom": "^1.0.6",
     "memory-cache": "^0.2.0",
     "method-override": "~2.3.10",
+    "nodemailer": "^6.7.2",
     "normalize.css": "^8.0.1",
     "prismic-dom": "^2.2.4",
     "prismic-javascript": "~1.4.0",

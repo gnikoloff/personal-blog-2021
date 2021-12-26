@@ -1,145 +1,152 @@
-const Prismic = require("prismic-javascript");
-const PrismicDOM = require("prismic-dom");
-const xml = require("xml");
-const { SitemapStream, streamToPromise } = require("sitemap");
-const { createGzip } = require("zlib");
-const { Readable } = require("stream");
-const rfc822Date = require("rfc822-date");
-const cache = require("memory-cache");
+require('dotenv').config()
 
-const PrismicConfig = require("../prismic-configuration");
-const app = require("../config");
-const API = require("./API");
+const Prismic = require('prismic-javascript')
+const PrismicDOM = require('prismic-dom')
+const xml = require('xml')
+const { SitemapStream, streamToPromise } = require('sitemap')
+const { createGzip } = require('zlib')
+const { Readable } = require('stream')
+const rfc822Date = require('rfc822-date')
+const cache = require('memory-cache')
+const sgMail = require('@sendgrid/mail')
 
-const { getPageTitle, decodeHTMLEntities } = require("./helpers");
+const PrismicConfig = require('../prismic-configuration')
+const app = require('../config')
+const API = require('./API')
 
-const CACHE_TIMEOUT = 60 * 10;
-const PORT = app.get("port");
-const WEBSITE_FULL_URL = "https://archive.georgi-nikolov.com";
+const { getPageTitle, decodeHTMLEntities } = require('./helpers')
+
+const CACHE_TIMEOUT = 60 * 10
+const PORT = app.get('port')
+const WEBSITE_FULL_URL = 'https://archive.georgi-nikolov.com'
 const PROJECT_TYPE_WORK = 'work'
 const PROJECT_TYPE_SPEAKING = 'speaking'
 
-const Elements = PrismicDOM.RichText.Elements;
+const Elements = PrismicDOM.RichText.Elements
 
-const memCache = new cache.Cache();
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
+const memCache = new cache.Cache()
 const cacheMiddleware = (duration) => {
+  if (process.env.ENVIRONMENT === 'development') {
+    return (_, __, next) => next()
+  }
   return (req, res, next) => {
-    let key = "__express__" + req.originalUrl || req.url;
-    let cacheContent = memCache.get(key);
+    let key = '__express__' + req.originalUrl || req.url
+    let cacheContent = memCache.get(key)
     if (cacheContent) {
-      res.send(cacheContent);
-      return;
+      res.send(cacheContent)
+      return
     } else {
-      res.sendResponse = res.send;
+      res.sendResponse = res.send
       res.send = (body) => {
-        memCache.put(key, body, duration * 1000);
-        res.sendResponse(body);
-      };
-      next();
+        memCache.put(key, body, duration * 1000)
+        res.sendResponse(body)
+      }
+      next()
     }
-  };
-};
+  }
+}
 
-let sitemap;
+let sitemap
 
-if (process.env.ENVIRONMENT === "development") {
+if (process.env.ENVIRONMENT === 'development') {
   app.listen(PORT, () => {
-    process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`);
-  });
+    process.stdout.write(`Point your browser to: http://localhost:${PORT}\n`)
+  })
 }
 
 const htmlSerializer = (type, element, content, children) => {
   if (type === Elements.preformatted) {
-    const renderedChildren = children.join("");
-    const lang = renderedChildren.substring(0, renderedChildren.indexOf("*"));
+    const renderedChildren = children.join('')
+    const lang = renderedChildren.substring(0, renderedChildren.indexOf('*'))
     return `<pre><code class="${lang}">${renderedChildren.substring(
-      renderedChildren.indexOf("*") + 1
-    )}</code></pre>`;
+      renderedChildren.indexOf('*') + 1,
+    )}</code></pre>`
   } else if (type === Elements.paragraph) {
-    return `<p>${decodeHTMLEntities(children.join(""))}</p>`;
+    return `<p>${decodeHTMLEntities(children.join(''))}</p>`
   } else if (type === Elements.listItem) {
-    return `<li>${decodeHTMLEntities(children.join(""))}</li>`;
+    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
   } else if (type === Elements.oListItem) {
-    return `<li>${decodeHTMLEntities(children.join(""))}</li>`;
+    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
   } else {
-    return null;
+    return null
   }
-};
+}
 
 // Middleware to inject prismic context
 app.use((req, res, next) => {
   res.locals.ctx = {
     endpoint: PrismicConfig.apiEndpoint,
     linkResolver: PrismicConfig.linkResolver,
-  };
+  }
   // add PrismicDOM in locals to access them in templates.
-  res.locals.PrismicDOM = PrismicDOM;
+  res.locals.PrismicDOM = PrismicDOM
   Prismic.api(PrismicConfig.apiEndpoint, {
     accessToken: PrismicConfig.accessToken,
     req,
   })
     .then((api) => {
-      req.prismic = { api };
-      next();
+      req.prismic = { api }
+      next()
     })
     .catch((error) => {
-      next(error.message);
-    });
-});
+      next(error.message)
+    })
+})
 
-app.get("/", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAllProjects({
       pageSize: 100,
-      orderings: "[document.last_publication_date desc]",
+      orderings: '[document.last_publication_date desc]',
     })
     .then(({ projects }) => {
-      res.render("body", {
+      res.render('body', {
         activePage: 'home',
         baseProjectPath: 'project',
-        title: getPageTitle("Home"),
+        title: getPageTitle('Home'),
         projects,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/project/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAllProjects({
       pageSize: 100,
-      orderings: "[document.last_publication_date desc]",
-      
+      orderings: '[document.last_publication_date desc]',
     })
     .then(({ projectsRaw }) => {
-      const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
+      const project = projectsRaw.find(({ uid }) => uid === req.params.uid)
       const projectIndex = projectsRaw.findIndex(
-        ({ uid }) => uid === req.params.uid
-      );
+        ({ uid }) => uid === req.params.uid,
+      )
 
-      let prevProjectIdx;
-      let nextProjectIdx;
+      let prevProjectIdx
+      let nextProjectIdx
 
       if (projectIndex > 0) {
-        prevProjectIdx = projectIndex - 1;
+        prevProjectIdx = projectIndex - 1
       } else {
-        prevProjectIdx = projectsRaw.length - 1;
+        prevProjectIdx = projectsRaw.length - 1
       }
 
       if (projectIndex < projectsRaw.length - 1) {
-        nextProjectIdx = projectIndex + 1;
+        nextProjectIdx = projectIndex + 1
       } else {
-        nextProjectIdx = 0;
+        nextProjectIdx = 0
       }
 
-      const prevProjectUID = projectsRaw[prevProjectIdx].uid;
-      const nextProjectUID = projectsRaw[nextProjectIdx].uid;
+      const prevProjectUID = projectsRaw[prevProjectIdx].uid
+      const nextProjectUID = projectsRaw[nextProjectIdx].uid
 
       const prevProjectName =
-        projectsRaw[prevProjectIdx].data.project_title[0].text;
+        projectsRaw[prevProjectIdx].data.project_title[0].text
       const nextProjectName =
-        projectsRaw[nextProjectIdx].data.project_title[0].text;
+        projectsRaw[nextProjectIdx].data.project_title[0].text
 
-      res.render("single", {
+      res.render('single', {
         activePage: 'home',
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
@@ -149,59 +156,62 @@ app.get("/project/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         prevProjectName,
         nextProjectName,
         htmlSerializer,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/speaking", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/speaking', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
-    .fetchAllProjects({
-      pageSize: 100,
-      orderings: "[document.last_publication_date desc]"
-    }, PROJECT_TYPE_SPEAKING)
+    .fetchAllProjects(
+      {
+        pageSize: 100,
+        orderings: '[document.last_publication_date desc]',
+      },
+      PROJECT_TYPE_SPEAKING,
+    )
     .then(({ projects }) => {
-      res.render("body", {
+      res.render('body', {
         activePage: 'speaking',
         baseProjectPath: 'speaking',
-        title: getPageTitle("Speaking"),
+        title: getPageTitle('Speaking'),
         projects: projects,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/speaking/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/speaking/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_SPEAKING)
     .then(({ projectsRaw }) => {
-      const project = projectsRaw.find(({ uid }) => uid === req.params.uid);
+      const project = projectsRaw.find(({ uid }) => uid === req.params.uid)
       const projectIndex = projectsRaw.findIndex(
-        ({ uid }) => uid === req.params.uid
-      );
+        ({ uid }) => uid === req.params.uid,
+      )
 
-      let prevProjectIdx;
-      let nextProjectIdx;
+      let prevProjectIdx
+      let nextProjectIdx
 
       if (projectIndex > 0) {
-        prevProjectIdx = projectIndex - 1;
+        prevProjectIdx = projectIndex - 1
       } else {
-        prevProjectIdx = projectsRaw.length - 1;
+        prevProjectIdx = projectsRaw.length - 1
       }
 
       if (projectIndex < projectsRaw.length - 1) {
-        nextProjectIdx = projectIndex + 1;
+        nextProjectIdx = projectIndex + 1
       } else {
-        nextProjectIdx = 0;
+        nextProjectIdx = 0
       }
 
-      const prevProjectUID = projectsRaw[prevProjectIdx].uid;
-      const nextProjectUID = projectsRaw[nextProjectIdx].uid;
+      const prevProjectUID = projectsRaw[prevProjectIdx].uid
+      const nextProjectUID = projectsRaw[nextProjectIdx].uid
 
       const prevProjectName =
-        projectsRaw[prevProjectIdx].data.project_title[0].text;
+        projectsRaw[prevProjectIdx].data.project_title[0].text
       const nextProjectName =
-        projectsRaw[nextProjectIdx].data.project_title[0].text;
+        projectsRaw[nextProjectIdx].data.project_title[0].text
 
-      res.render("single", {
+      res.render('single', {
         activePage: 'speaking',
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
@@ -211,38 +221,82 @@ app.get("/speaking/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         prevProjectName,
         nextProjectName,
         htmlSerializer,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/about", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/about', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAboutPage()
     .then((document) => {
-      res.render("about", {
+      res.render('about', {
         activePage: 'about',
-        title: getPageTitle("About"),
+        title: getPageTitle('About'),
         document,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/blog", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/contact', (req, res) => {
+  res.render('contact', {
+    activePage: 'contact',
+    title: getPageTitle('Contact'),
+  })
+})
+
+app.post('/contact', (req, res) => {
+  console.clear()
+  const msg = {
+    to: process.env.BUSINESS_EMAIL,
+    from: req.query['Email'],
+    subject: `Contact: ${req.query['Name']} WRT possible ${req.query['Project Type']}`,
+    html: `
+      <p>
+        Name: ${req.query['Name']}<br/>
+        Email: ${req.query['Email']}<br/>
+        Project Type: ${req.query['Project Type']}
+        ${
+          req.query['Project Type'] === 'Project'
+            ? `Budget: ${req.query['Budget']}<br/>`
+            : ''
+        }
+        Message:<br/>
+        ${req.query['Message']}
+
+      </p>
+    `,
+  }
+  sgMail
+    .send(msg)
+    .then(() => {
+      res.json({
+        type: 'SUCCESS',
+      })
+    })
+    .catch((error) => {
+      res.json({
+        type: 'ERROR',
+        payload: JSON.stringify(error),
+      })
+    })
+})
+
+app.get('/blog', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchBlog({
       pageSize: 100,
-      orderings: "[document.last_publication_date desc]",
+      orderings: '[document.last_publication_date desc]',
     })
     .then((projects) => {
-      res.render("blog", {
+      res.render('blog', {
         activePage: 'blog',
-        title: getPageTitle("Blog"),
+        title: getPageTitle('Blog'),
         projects,
-      });
-    });
-});
+      })
+    })
+})
 
-app.get("/blog/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+app.get('/blog/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchArticle(req.params.uid)
     .then((articlePage) => {
@@ -251,152 +305,153 @@ app.get("/blog/:uid", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         seoDescription: articlePage.project.data.seo_description,
         ...articlePage,
         htmlSerializer,
-      };
-      res.render("blog-single", pageData);
-    });
-});
+      }
+      res.render('blog-single', pageData)
+    })
+})
 
-app.get("/sitemap.xml", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  res.header("Content-Type", "application/xml");
-  res.header("Content-Encoding", "gzip");
+app.get('/sitemap.xml', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  res.header('Content-Type', 'application/xml')
+  res.header('Content-Encoding', 'gzip')
   // if we have a cached entry send it
   if (sitemap) {
-    res.send(sitemap);
-    return;
+    res.send(sitemap)
+    return
   }
 
   try {
-    const smStream = new SitemapStream({ hostname: WEBSITE_FULL_URL });
-    const pipeline = smStream.pipe(createGzip());
+    const smStream = new SitemapStream({ hostname: WEBSITE_FULL_URL })
+    const pipeline = smStream.pipe(createGzip())
 
     // pipe your entries or directly write them.
     smStream.write({
-      url: "/",
-      changefreq: "weekly",
+      url: '/',
+      changefreq: 'weekly',
       priority: 0.7,
-    });
+    })
     smStream.write({
-      url: "/about",
-      changefreq: "monthly",
+      url: '/about',
+      changefreq: 'monthly',
       priority: 0.3,
-    });
+    })
     smStream.write({
-      url: "/blog",
-    }); // changefreq: 'weekly',  priority: 0.5
+      url: '/blog',
+    }) // changefreq: 'weekly',  priority: 0.5
 
-    const APIInstance = API.getInstance(req.prismic);
+    const APIInstance = API.getInstance(req.prismic)
 
     Promise.all([
       APIInstance.fetchBlog({ pageSize: 50 }),
       APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_WORK),
     ]).then((responses) => {
-      const blogPorts = responses[0] ? responses[0] : [];
+      const blogPorts = responses[0] ? responses[0] : []
 
-      const posts = responses[1];
-      const projects = posts ? posts.projects : [];
+      const posts = responses[1]
+      const projects = posts ? posts.projects : []
 
       blogPorts.forEach((blog) => {
         smStream.write({
           url: `/blog/${blog.uid}`,
-        });
-      });
+        })
+      })
 
       Object.values(projects).forEach((projects) => {
         Object.values(projects).forEach((project) => {
           smStream.write({
             url: `/project/${project.uid}`,
             img: project.data.project_image.url,
-          });
-        });
-      });
+          })
+        })
+      })
       // cache the response
-      streamToPromise(pipeline).then((sm) => (sitemap = sm));
+      streamToPromise(pipeline).then((sm) => (sitemap = sm))
       // make sure to attach a write stream such as streamToPromise before ending
-      smStream.end();
+      smStream.end()
       // stream write the response
-      pipeline.pipe(res).on("error", (e) => {
-        throw e;
-      });
-    });
+      pipeline.pipe(res).on('error', (e) => {
+        throw e
+      })
+    })
 
     /* or use
     Readable.from([{url: '/page-1'}...]).pipe(smStream)
     if you are looking to avoid writing your own loop.
     */
   } catch (e) {
-    console.error(e);
-    res.status(500).end();
+    console.error(e)
+    res.status(500).end()
   }
-});
+})
 
-app.get("/feed.rss", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  const APIInstance = API.getInstance(req.prismic);
+app.get('/feed.rss', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  const APIInstance = API.getInstance(req.prismic)
   Promise.all([
     APIInstance.fetchBlog({ pageSize: 50 }),
     APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_WORK),
     APIInstance.fetchAllProjects({ pageSize: 100 }, PROJECT_TYPE_SPEAKING),
   ]).then((responses) => {
-    const blogPorts = responses[0] ? responses[0] : [];
-    const posts = (responses[1] && responses[2]) ? {...responses[1], ...responses[2] } : {};
+    const blogPorts = responses[0] ? responses[0] : []
+    const posts =
+      responses[1] && responses[2] ? { ...responses[1], ...responses[2] } : {}
 
-    const projects = posts.projectsRaw;
+    const projects = posts.projectsRaw
     const xmlObject = {
       rss: [
         {
           _attr: {
-            version: "2.0",
-            "xmlns:atom": "http://www.w3.org/2005/Atom",
+            version: '2.0',
+            'xmlns:atom': 'http://www.w3.org/2005/Atom',
           },
         },
         {
           channel: [
             {
-              "atom:link": {
+              'atom:link': {
                 _attr: {
                   href: `${WEBSITE_FULL_URL}/feed.rss`,
-                  rel: "self",
-                  type: "application/rss+xml",
+                  rel: 'self',
+                  type: 'application/rss+xml',
                 },
               },
             },
-            { title: "Georgi Nikolov" },
+            { title: 'Georgi Nikolov' },
             { link: WEBSITE_FULL_URL },
             {
               description:
-                "Website for blog articles and works by Georgi Nikolov, a frontend developer living in Berlin, Germany.",
+                'Website for blog articles and works by Georgi Nikolov, a frontend developer living in Berlin, Germany.',
             },
-            { language: "en-us" },
+            { language: 'en-us' },
             ...projects.map((project) => {
-              const absoluteHREF = `${WEBSITE_FULL_URL}/project/${project.uid}`;
+              const absoluteHREF = `${WEBSITE_FULL_URL}/project/${project.uid}`
               const postDate = rfc822Date(
-                new Date(project.first_publication_date)
-              );
+                new Date(project.first_publication_date),
+              )
               return {
                 item: [
                   { title: project.data.project_title[0].text },
-                  { author: "nikoloffgeorgi@gmail.com" },
+                  { author: 'nikoloffgeorgi@gmail.com' },
                   { pubDate: postDate },
                   { link: absoluteHREF },
                   { guid: absoluteHREF },
                   {
                     description: {
                       _cdata: PrismicDOM.RichText.asHtml(
-                        project.data.project_body
+                        project.data.project_body,
                       ),
                     },
                   },
                 ],
-              };
+              }
             }),
             ...blogPorts.map((article) => {
-              const absoluteHREF = `${WEBSITE_FULL_URL}/blog/${article.uid}`;
+              const absoluteHREF = `${WEBSITE_FULL_URL}/blog/${article.uid}`
               const postDate = rfc822Date(
-                new Date(article.first_publication_date)
-              );
+                new Date(article.first_publication_date),
+              )
               return {
                 item: [
                   { title: article.data.title[0].text },
-                  { author: "nikoloffgeorgi@gmail.com" },
+                  { author: 'nikoloffgeorgi@gmail.com' },
                   { pubDate: postDate },
                   { link: absoluteHREF },
                   { guid: absoluteHREF },
@@ -406,16 +461,16 @@ app.get("/feed.rss", cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
                     },
                   },
                 ],
-              };
+              }
             }),
           ],
         },
       ],
-    };
-    const xmlString = `<?xml version="1.0" encoding="UTF-8"?>${xml(xmlObject)}`;
-    res.set("Content-Type", "text/xml");
-    res.send(xmlString);
-  });
-});
+    }
+    const xmlString = `<?xml version="1.0" encoding="UTF-8"?>${xml(xmlObject)}`
+    res.set('Content-Type', 'text/xml')
+    res.send(xmlString)
+  })
+})
 
-module.exports = app;
+module.exports = app
