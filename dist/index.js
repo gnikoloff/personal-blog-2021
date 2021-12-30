@@ -4116,35 +4116,35 @@ require("highlight.js/styles/codepen-embed.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_core.default.registerLanguage("xml", _xml.default);
+_core.default.registerLanguage('xml', _xml.default);
 
-_core.default.registerLanguage("javascript", _javascript.default);
+_core.default.registerLanguage('javascript', _javascript.default);
 
-_core.default.registerLanguage("glsl", _glsl.default);
+_core.default.registerLanguage('glsl', _glsl.default);
 
 var BACKEND_URL = location.origin;
-document.addEventListener("DOMContentLoaded", init);
+document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  if (document.body.classList.contains("homepage")) {
+  if (document.body.classList.contains('homepage')) {
     initHome();
   }
 
-  if (document.body.classList.contains("single-blog")) {
+  if (document.body.classList.contains('single-blog')) {
     initSingleBlog();
   }
 
-  if (document.body.classList.contains("single-work")) {
+  if (document.body.classList.contains('single-work')) {
     initSingleWork();
   }
 
-  if (document.body.classList.contains("contact")) {
+  if (document.body.classList.contains('contact')) {
     initContact();
   }
 }
 
 function initSingleWork() {
-  var allImages = document.querySelectorAll(".single-work img");
+  var allImages = document.querySelectorAll('.single-work img');
   (0, _mediumZoom.default)(allImages, {
     container: {
       width: innerWidth,
@@ -4155,33 +4155,33 @@ function initSingleWork() {
       left: 0
     }
   });
-  document.querySelectorAll("pre code").forEach(function (block) {
+  document.querySelectorAll('pre code').forEach(function (block) {
     _core.default.highlightBlock(block);
   });
 }
 
 function initSingleBlog() {
-  document.querySelectorAll("pre code").forEach(function (block) {
+  document.querySelectorAll('pre code').forEach(function (block) {
     _core.default.highlightBlock(block);
   });
 }
 
 function initHome() {
-  var allWorks = document.getElementsByClassName("preview");
+  var allWorks = document.getElementsByClassName('preview');
 
   var _loop = function _loop(i) {
     var workEl = allWorks[i];
-    var imageSrc = workEl.getAttribute("data-image");
-    var imageAlt = workEl.getAttribute("data-alt");
-    var imageWrapper = workEl.getElementsByClassName("preview-image-wrapper")[0];
+    var imageSrc = workEl.getAttribute('data-image');
+    var imageAlt = workEl.getAttribute('data-alt');
+    var imageWrapper = workEl.getElementsByClassName('preview-image-wrapper')[0];
 
     var makeImage = function makeImage() {
-      var img = document.createElement("img");
-      img.classList.add("project-preview-image");
-      img.setAttribute("src", imageSrc);
-      img.setAttribute("alt", imageAlt);
+      var img = document.createElement('img');
+      img.classList.add('project-preview-image');
+      img.setAttribute('src', imageSrc);
+      img.setAttribute('alt', imageAlt);
       requestAnimationFrame(function () {
-        img.classList.add("inView");
+        img.classList.add('inView');
       });
       imageWrapper.appendChild(img);
     };
@@ -4211,64 +4211,64 @@ function initHome() {
 }
 
 function initContact() {
-  var form = document.getElementById("contact-form");
-  var emailLoadbar = document.querySelector(".email-send-loader-wrapper");
-  form.addEventListener("submit", function (e) {
+  var form = document.getElementById('contact-form');
+  var emailLoadbar = document.querySelector('.email-send-loader-wrapper');
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     var formData = new FormData(form);
     var formParams = new URLSearchParams(formData).toString();
-    emailLoadbar.classList.add("visible");
+    emailLoadbar.classList.add('visible');
     var url = "".concat(BACKEND_URL, "/contact?").concat(formParams);
     fetch(url, {
-      method: "POST"
+      method: 'POST'
     }).then(function (res) {
       return res.json();
     }).then(function (res) {
-      emailLoadbar.classList.remove("visible");
-      var inputs = form.getElementsByTagName("input");
+      emailLoadbar.classList.remove('visible');
+      var inputs = form.getElementsByTagName('input');
 
       for (var i = 0; i < inputs.length; i++) {
-        if (inputs[i].getAttribute("type") !== "submit") {
-          inputs[i].value = "";
+        if (inputs[i].getAttribute('type') !== 'submit') {
+          inputs[i].value = '';
         }
       }
 
-      var textarea = form.getElementsByTagName("textarea");
+      var textarea = form.getElementsByTagName('textarea');
 
       for (var _i = 0; _i < textarea.length; _i++) {
-        textarea[_i].value = "";
+        textarea[_i].value = '';
       }
 
-      if (res.type === "ERROR") {
+      if (res.type === 'ERROR') {
         console.error(JSON.parse(res.payload));
       } else {
-        var formSuccess = document.getElementsByClassName("contact-form-success")[0];
-        var formWrapper = document.getElementsByClassName("contact-form-wrapper")[0];
-        formSuccess.style.setProperty("display", "block");
-        formWrapper.style.setProperty("display", "none");
+        var formSuccess = document.getElementsByClassName('contact-form-success')[0];
+        var formWrapper = document.getElementsByClassName('contact-form-wrapper')[0];
+        formSuccess.style.setProperty('display', 'block');
+        formWrapper.style.setProperty('display', 'none');
         setTimeout(function () {
-          formSuccess.style.removeProperty("display");
-          formWrapper.style.removeProperty("display");
+          formSuccess.style.removeProperty('display');
+          formWrapper.style.removeProperty('display');
         }, 8 * 1000);
       }
     }).catch(console.error);
   });
-  var budgetInputWrapper = document.getElementById("budget-group");
-  var budgetInput = document.getElementById("budget");
-  var projectTypeSelect = document.getElementById("project-type");
-  projectTypeSelect.addEventListener("change", function (e) {
-    if (e.target.value === "Project") {
-      budgetInput.setAttribute("required", "");
-      budgetInputWrapper.style.setProperty("display", "block");
+  var budgetInputWrapper = document.getElementById('budget-group');
+  var budgetInput = document.getElementById('budget');
+  var projectTypeSelect = document.getElementById('project-type');
+  projectTypeSelect.addEventListener('change', function (e) {
+    if (e.target.value === 'Project') {
+      budgetInput.setAttribute('required', '');
+      budgetInputWrapper.style.setProperty('display', 'block');
     } else {
-      budgetInput.removeAttribute("required");
-      budgetInputWrapper.style.removeProperty("display");
+      budgetInput.removeAttribute('required');
+      budgetInputWrapper.style.removeProperty('display');
     }
   });
 }
 
 function supportIntersectObserver() {
-  return "IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype;
+  return 'IntersectionObserver' in window && 'IntersectionObserverEntry' in window && 'intersectionRatio' in window.IntersectionObserverEntry.prototype;
 }
 },{"normalize.css":"../node_modules/normalize.css/normalize.css","./style.scss":"style.scss","highlight.js/lib/core":"../node_modules/highlight.js/lib/core.js","highlight.js/lib/languages/xml":"../node_modules/highlight.js/lib/languages/xml.js","highlight.js/lib/languages/javascript":"../node_modules/highlight.js/lib/languages/javascript.js","highlight.js/lib/languages/glsl":"../node_modules/highlight.js/lib/languages/glsl.js","medium-zoom":"../node_modules/medium-zoom/dist/medium-zoom.esm.js","highlight.js/styles/codepen-embed.css":"../node_modules/highlight.js/styles/codepen-embed.css"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -4298,7 +4298,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51045" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56331" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
