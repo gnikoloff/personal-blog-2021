@@ -94,6 +94,33 @@ app.use((req, res, next) => {
     })
 })
 
+app.get('/api/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  Promise.all([
+    API.getInstance(req.prismic).fetchAllProjects({
+      pageSize: 100,
+      orderings: '[document.last_publication_date desc]',
+    }),
+    API.getInstance(req.prismic).fetchAllProjects(
+      {
+        pageSize: 100,
+        orderings: '[document.last_publication_date desc]',
+      },
+      PROJECT_TYPE_SPEAKING,
+    ),
+  ]).then(
+    ([
+      { projectsRaw: projectsRawWorks },
+      { projectsRaw: projectsRawSpeaking },
+    ]) => {
+      res.json([...projectsRawWorks, ...projectsRawSpeaking])
+    },
+  )
+
+  // .then(({ projectsRaw }) => {
+  //   res.json(projectsRaw)
+  // })
+})
+
 app.get('/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchAllProjects({
