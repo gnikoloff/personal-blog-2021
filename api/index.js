@@ -345,6 +345,10 @@ app.get('/blog/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
 })
 
+app.get('/imprint', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  res.render('imprint')
+})
+
 app.get('/sitemap.xml', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   res.header('Content-Type', 'application/xml')
   res.header('Content-Encoding', 'gzip')

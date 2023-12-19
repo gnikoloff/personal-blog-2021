@@ -1,25 +1,31 @@
 .container
   footer.app-footer
-    div.copyright © Georgi Nikolov #{new Date().getFullYear()}
+    .footer-wrapper
+      div.copyright Georgi Nikolov #{new Date().getFullYear()}
+      ul.social
+        li
+          a(
+            href="https://twitter.com/georgiNikoloff"
+            target="_blank"
+            rel="noopener noreferrer"
+          ) Twitter
+        li
+          a(
+            href="https://github.com/gnikoloff"
+            target="_blank"
+            rel="noopener noreferrer"
+          ) Github
+        li
+          a(
+            href="https://codepen.io/gbnikolov"
+            target="_blank"
+            rel="noopener noreferrer"
+          ) Codepen
+    
+  div.legal
     ul.social
       li
-        a(
-          href="https://twitter.com/georgiNikoloff"
-          target="_blank"
-          rel="noopener noreferrer"
-        ) Twitter
-      li
-        a(
-          href="https://github.com/gnikoloff"
-          target="_blank"
-          rel="noopener noreferrer"
-        ) Github
-      li
-        a(
-          href="https://codepen.io/gbnikolov"
-          target="_blank"
-          rel="noopener noreferrer"
-        ) Codepen
+        a(href="/imprint") Legal Notice
 
 script(src="/index.js")
 

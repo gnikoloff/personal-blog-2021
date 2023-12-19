@@ -239,6 +239,9 @@ img {
 
 .app-footer {
   padding: 5rem 0 3rem 0;
+}
+
+.footer-wrapper {
   @media (min-width: 580px) {
     display: flex;
     align-items: center;
@@ -469,4 +472,22 @@ img {
 .contact-form-success {
   display: none;
   text-align: center;
+}
+
+.legal {
+  margin: 7rem 0 2rem 0;
+  @media (min-width: 580px) {
+    // display: flex;
+    // justify-content: flex-end;
+  }
+}
+
+.legal a {
+  color: rgba(0, 0, 0, 0.62);
+}
+
+.legal li {
+  &:after {
+    color: rgba(0, 0, 0, 0.62);
+  }
 }
