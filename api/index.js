@@ -346,7 +346,7 @@ app.get('/blog/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 })
 
 app.get('/imprint', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  res.render('imprint')
+  res.render('imprint', { title: getPageTitle('Legal Notice') })
 })
 
 app.get('/sitemap.xml', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
