@@ -578,10 +578,16 @@ img[src*=".gif"] {
   padding: 5rem 0 3rem 0;
 }
 
+.address {
+  font-style: normal;
+  line-height: 1.6;
+  color: rgba(0, 0, 0, 0.62);
+}
+
 @media (min-width: 580px) {
   .footer-wrapper {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
   }
 }
