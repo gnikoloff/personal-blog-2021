@@ -2,11 +2,29 @@
   box-sizing: border-box;
 }
 
-body {
+@page {
+  size: A4 portrait;
+  margin: 2cm 3cm;
+}
+
+html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+}
+
+body {
   fill: currentColor;
   padding: 5rem 0;
+  @media print {
+    padding: 0;
+  }
+}
+
+address {
+  font-style: normal;
+  line-height: 1.6rem;
+  margin: 0rem 0;
+  color: rgba(0, 0, 0, 0.76);
 }
 
 // ul {
@@ -90,6 +108,10 @@ img {
   }
 }
 
+.sep {
+  color: rgba(0, 0, 0, 0.32);
+}
+
 .container {
   margin: 0 auto;
   padding: 0 32px;
@@ -102,6 +124,21 @@ img {
 .logo {
   font-size: 1.75rem;
   margin-bottom: 0.35rem;
+}
+
+.print-email {
+  display: none;
+  margin-bottom: 1rem;
+  @media print {
+    display: block;
+  }
+}
+
+.hero-address {
+  display: none;
+  @media print {
+    display: block;
+  }
 }
 
 .title {
@@ -130,6 +167,9 @@ img {
   padding-left: 0;
   padding-bottom: 2rem;
   margin-bottom: 2rem;
+  @media print {
+    display: none;
+  }
   li {
     display: inline-block;
     list-style: none;
@@ -155,6 +195,9 @@ img {
 
 .hero {
   margin-bottom: 6rem;
+  @media print {
+    margin-bottom: 2rem;
+  }
 }
 
 .preview {
@@ -239,6 +282,9 @@ img {
 
 .app-footer {
   padding: 5rem 0 3rem 0;
+  @media print {
+    display: none;
+  }
 }
 
 .address {
@@ -298,6 +344,84 @@ img {
 .back-link {
   margin-top: 5rem;
   display: block;
+  @media print {
+    display: none;
+  }
+}
+
+.print {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: none;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  @media print {
+    display: none;
+  }
+}
+
+.print-top {
+  margin-bottom: 3rem;
+}
+
+.print-bottom {
+  margin-top: 3rem;
+}
+
+.print-icon {
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.print-txt {
+  margin: 0;
+  color: blue;
+}
+
+.intro {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  margin-top: 3rem;
+  padding-top: 3rem;
+}
+
+.intro-web {
+  @media print {
+    display: none;
+  }
+}
+
+.skills-wrapper {
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  margin-top: 3rem;
+  padding-top: 3rem;
+  h2 {
+    margin-top: 0;
+    margin-bottom: 4rem;
+  }
+}
+
+// .skills-section {
+//   page-break-after: avoid;
+// }
+
+.experience-section {
+  margin-top: 3rem;
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.skills-section h3 {
+  page-break-after: avoid;
+}
+
+.intro-print {
+  display: none;
+  @media print {
+    display: block;
+  }
 }
 
 .about-wrapper {
@@ -305,14 +429,13 @@ img {
     display: flex;
     justify-content: space-between;
     flex-direction: row-reverse;
-
-    aside {
-      width: 40%;
-    }
-    main {
-      width: 55%;
-    }
   }
+}
+
+#mugshot {
+  margin-left: 2rem;
+  float: right;
+  max-width: 300px;
 }
 
 .blog-wrapper {
@@ -489,6 +612,9 @@ img {
   @media (min-width: 580px) {
     // display: flex;
     // justify-content: flex-end;
+  }
+  @media print {
+    display: none;
   }
 }
 

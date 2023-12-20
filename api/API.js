@@ -56,6 +56,14 @@ class API {
         return document
       })
   }
+  fetchCVPage() {
+    return this._Prismic.api
+      .query(Prismic.Predicates.at('document.type', 'cv'))
+      .then((response) => {
+        const document = response.results[0]
+        return document
+      })
+  }
   fetchBlog(opts) {
     // const aboutPage = this._cache.get(BLOG_CACHE_KEY)
     // if (aboutPage && process.env.ENVIRONMENT !== 'development') {

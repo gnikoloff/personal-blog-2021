@@ -263,6 +263,18 @@ app.get('/about', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
 })
 
+app.get('/vitae', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  API.getInstance(req.prismic)
+    .fetchCVPage()
+    .then((document) => {
+      res.render('cv', {
+        activePage: 'cv',
+        title: getPageTitle('CV'),
+        document,
+      })
+    })
+})
+
 app.get('/contact', (req, res) => {
   res.render('contact', {
     activePage: 'contact',

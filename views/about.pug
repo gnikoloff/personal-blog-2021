@@ -8,12 +8,12 @@ html
 
       h1 About
       div.about-wrapper
-        aside
-          img(
+        main
+          img#mugshot(
             src=document.data.mugshot.url
             alt=document.data.mugshot.alt
           )
-        main !{PrismicDOM.RichText.asHtml(document.data.text, linkResolver)}
+          | !{PrismicDOM.RichText.asHtml(document.data.text, linkResolver)}
       div !{PrismicDOM.RichText.asHtml(document.data.experience, linkResolver)}
 
       a(href="/").back-link Back
