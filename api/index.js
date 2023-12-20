@@ -252,15 +252,16 @@ app.get('/speaking/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
 })
 
 app.get('/about', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  API.getInstance(req.prismic)
-    .fetchAboutPage()
-    .then((document) => {
-      res.render('about', {
-        activePage: 'about',
-        title: getPageTitle('About'),
-        document,
-      })
-    })
+  res.redirect('/vitae')
+  // API.getInstance(req.prismic)
+  //   .fetchAboutPage()
+  //   .then((document) => {
+  //     res.render('about', {
+  //       activePage: 'about',
+  //       title: getPageTitle('About'),
+  //       document,
+  //     })
+  //   })
 })
 
 app.get('/vitae', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
