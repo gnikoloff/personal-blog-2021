@@ -129,6 +129,7 @@ img {
 .print-email {
   display: none;
   margin-bottom: 1rem;
+  text-decoration: none;
   @media print {
     display: block;
   }
@@ -224,12 +225,12 @@ img {
 }
 
 .preview-title {
-  margin-bottom: 0;
+  margin-bottom: 0rem;
 }
 
 .preview-type {
   margin-top: 0.5rem;
-  color: rgba(black, 0.92);
+  color: rgba(black, 0.32);
 }
 
 .works {
@@ -398,7 +399,7 @@ img {
   padding-top: 3rem;
   h2 {
     margin-top: 0;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
   }
 }
 

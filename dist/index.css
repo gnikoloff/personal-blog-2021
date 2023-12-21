@@ -468,6 +468,7 @@ img[src*=".gif"] {
 .print-email {
   display: none;
   margin-bottom: 1rem;
+  text-decoration: none;
 }
 @media print {
   .print-email {
@@ -571,12 +572,12 @@ img[src*=".gif"] {
 }
 
 .preview-title {
-  margin-bottom: 0;
+  margin-bottom: 0rem;
 }
 
 .preview-type {
   margin-top: 0.5rem;
-  color: rgba(0, 0, 0, 0.92);
+  color: rgba(0, 0, 0, 0.32);
 }
 
 .works {
@@ -751,7 +752,7 @@ img[src*=".gif"] {
 }
 .skills-wrapper h2 {
   margin-top: 0;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .experience-section {
