@@ -64,6 +64,14 @@ class API {
         return document
       })
   }
+  fetchCVPdfFile() {
+    return this._Prismic.api
+      .query(Prismic.Predicates.at('document.type', 'pdf-cv'))
+      .then((response) => {
+        return response.results[0].data.pdf.url
+      })
+      .catch(console.error)
+  }
   fetchBlog(opts) {
     // const aboutPage = this._cache.get(BLOG_CACHE_KEY)
     // if (aboutPage && process.env.ENVIRONMENT !== 'development') {

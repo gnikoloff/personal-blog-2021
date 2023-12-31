@@ -294,6 +294,12 @@ img {
   line-height: 1.6;
 }
 
+.address-footer {
+  @media (min-width: 580px) {
+    text-align: right;
+  }
+}
+
 .address p {
   color: rgba(0, 0, 0, 0.62);
 }
@@ -352,7 +358,7 @@ img {
 
 .print {
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
   background: none;

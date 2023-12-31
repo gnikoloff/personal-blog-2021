@@ -276,6 +276,14 @@ app.get('/vitae', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
     })
 })
 
+app.get('/cv', (req, res) => {
+  API.getInstance(req.prismic)
+    .fetchCVPdfFile()
+    .then((pdfURL) => {
+      res.redirect(pdfURL)
+    })
+})
+
 app.get('/contact', (req, res) => {
   res.render('contact', {
     activePage: 'contact',

@@ -38,13 +38,13 @@ function init() {
 }
 
 function initCV() {
-  const printButtons = document.getElementsByClassName('print')
-  for (let i = 0; i < printButtons.length; i++) {
-    const printBtn = printButtons[i]
-    printBtn.addEventListener('click', () => {
-      print()
-    })
-  }
+  // const printButtons = document.getElementsByClassName('print')
+  // for (let i = 0; i < printButtons.length; i++) {
+  //   const printBtn = printButtons[i]
+  //   printBtn.addEventListener('click', () => {
+  //     print()
+  //   })
+  // }
 }
 
 function initSingleWork() {

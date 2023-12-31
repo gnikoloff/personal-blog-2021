@@ -6,7 +6,7 @@ html
       include nav.pug
       include logo.pug
 
-      button.print.print-top
+      a.print.print-top(href="/cv")
         svg.print-icon(
           xmlns="http://www.w3.org/2000/svg"
           version="1.1"
@@ -17,7 +17,7 @@ html
           path(fill="blue" d="M26,9H4c-1.105,0-2,0.895-2,2v9c0,1.105,0.895,2,2,2h3v-8h16v8h3c1.105,0,2-0.895,2-2v-9C28,9.895,27.105,9,26,9z")
           rect(height="12" style="fill:none;stroke:blue;stroke-width:2;stroke-miterlimit:10;" width="16" x="7" y="14")
           path(fill="blue" d="M24,7H6V5c0-0.552,0.448-1,1-1h16c0.552,0,1,0.448,1,1V7z")
-        p.print-txt Print
+        p.print-txt Download PDF
       div.cv-wrapper
         div.intro-web !{PrismicDOM.RichText.asHtml(document.data['intro-web'], linkResolver)}
         div.intro.intro-print !{PrismicDOM.RichText.asHtml(document.data['intro-print'], linkResolver)}
@@ -55,7 +55,7 @@ html
         div.skills-wrapper
           | !{PrismicDOM.RichText.asHtml(document.data['education'], linkResolver)}
 
-      button.print.print-bottom
+      a.print.print-bottom(href="/cv")
         svg.print-icon(
           xmlns="http://www.w3.org/2000/svg"
           version="1.1"
@@ -66,7 +66,7 @@ html
           path(fill="blue" d="M26,9H4c-1.105,0-2,0.895-2,2v9c0,1.105,0.895,2,2,2h3v-8h16v8h3c1.105,0,2-0.895,2-2v-9C28,9.895,27.105,9,26,9z")
           rect(height="12" style="fill:none;stroke:blue;stroke-width:2;stroke-miterlimit:10;" width="16" x="7" y="14")
           path(fill="blue" d="M24,7H6V5c0-0.552,0.448-1,1-1h16c0.552,0,1,0.448,1,1V7z")
-        p.print-txt Print
+        p.print-txt Download PDF
 
       a(href="/").back-link Back
   include footer.pug
