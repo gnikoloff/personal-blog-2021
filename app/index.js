@@ -48,7 +48,12 @@ function initCV() {
 }
 
 function initSingleWork() {
-  const allImages = document.querySelectorAll('.single-work img')
+  const allImages = [...document.querySelectorAll('.single-work img')].filter(
+    (img) => {
+      return img.parentNode.nodeName !== 'A'
+    },
+  )
+
   mediumZoom(allImages, {
     container: {
       width: innerWidth,
