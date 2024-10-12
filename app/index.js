@@ -6,6 +6,7 @@ import hljs from 'highlight.js/lib/core'
 import xml from 'highlight.js/lib/languages/xml'
 import javascript from 'highlight.js/lib/languages/javascript'
 import glsl from 'highlight.js/lib/languages/glsl'
+import swift from 'highlight.js/lib/languages/swift'
 
 import mediumZoom from 'medium-zoom'
 
@@ -14,6 +15,7 @@ import 'highlight.js/styles/codepen-embed.css'
 hljs.registerLanguage('xml', xml)
 hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('glsl', glsl)
+hljs.registerLanguage('swift', swift)
 
 const BACKEND_URL = location.origin
 
