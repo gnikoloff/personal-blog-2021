@@ -1,8 +1,10 @@
 html
   include head.pug
+  
 
   body.single-blog
     .container
+      include logo.pug
       include nav.pug
       .single-blog-title
         div !{PrismicDOM.RichText.asHtml(project.data.title, null, htmlSerializer)}

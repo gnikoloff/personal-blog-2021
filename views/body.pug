@@ -3,8 +3,8 @@ html
 
   body.homepage
     .container
-      include nav.pug
       include logo.pug
+      include nav.pug
       each year in Object.keys(projects).sort((a, b) => parseInt(b) - parseInt(a))
         article.year-wrapper
           h2.year-title #{year}
