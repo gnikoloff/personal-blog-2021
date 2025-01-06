@@ -1,12 +1,17 @@
+import Splide from '@splidejs/splide'
+import '@splidejs/splide/dist/css/splide.min.css'
+import ImageCompare from 'image-compare-viewer'
+import 'image-compare-viewer/dist/image-compare-viewer.min.css'
 import 'normalize.css'
 import './style.scss'
 
 import hljs from 'highlight.js/lib/core'
 
-import xml from 'highlight.js/lib/languages/xml'
-import javascript from 'highlight.js/lib/languages/javascript'
 import glsl from 'highlight.js/lib/languages/glsl'
+import javascript from 'highlight.js/lib/languages/javascript'
 import swift from 'highlight.js/lib/languages/swift'
+import typescript from 'highlight.js/lib/languages/typescript'
+import xml from 'highlight.js/lib/languages/xml'
 
 import mediumZoom from 'medium-zoom'
 
@@ -14,6 +19,7 @@ import 'highlight.js/styles/codepen-embed.css'
 
 hljs.registerLanguage('xml', xml)
 hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('typescript', typescript)
 hljs.registerLanguage('glsl', glsl)
 hljs.registerLanguage('swift', swift)
 
@@ -75,6 +81,26 @@ function initSingleWork() {
 function initSingleBlog() {
   document.querySelectorAll('pre code').forEach((block) => {
     hljs.highlightBlock(block)
+  })
+  document.querySelectorAll('.image-compare').forEach((el) => {
+    const pics = el.querySelectorAll('[data-label]')
+    const beforePic = pics[0]
+    const afterPic = pics[1]
+    new ImageCompare(el, {
+      showLabels: true,
+      labelOptions: {
+        before: beforePic.dataset.label,
+        after: afterPic.dataset.label,
+        onHover: false, // default
+      },
+    }).mount()
+  })
+  document.querySelectorAll('.splide').forEach((el) => {
+    new Splide(el, {
+      type: 'fade',
+      rewind: true,
+      lazyLoad: 'nearby',
+    }).mount()
   })
 }
 
