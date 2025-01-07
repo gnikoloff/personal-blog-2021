@@ -1,5 +1,5 @@
 require('dotenv').config()
-
+const htmlToFormattedText = require('html-to-formatted-text')
 const Prismic = require('prismic-javascript')
 const PrismicDOM = require('prismic-dom')
 const xml = require('xml')
@@ -56,21 +56,25 @@ if (process.env.ENVIRONMENT === 'development') {
 }
 
 const htmlSerializer = (type, element, content, children) => {
+  let out
   if (type === Elements.preformatted) {
     const renderedChildren = children.join('')
-    const lang = renderedChildren.substring(0, renderedChildren.indexOf('*'))
-    return `<pre><code class="${lang}">${renderedChildren.substring(
-      renderedChildren.indexOf('*') + 1,
+    const lang = 'javascript' //renderedChildren.substring(0, renderedChildren.indexOf('*'))
+
+    out = `<pre><code class="${lang}">${htmlToFormattedText(
+      renderedChildren,
     )}</code></pre>`
   } else if (type === Elements.paragraph) {
-    return `<p>${decodeHTMLEntities(children.join(''))}</p>`
+    out = `<p>${decodeHTMLEntities(children.join(''))}</p>`
   } else if (type === Elements.listItem) {
-    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
+    out = `<li>${decodeHTMLEntities(children.join(''))}</li>`
   } else if (type === Elements.oListItem) {
-    return `<li>${decodeHTMLEntities(children.join(''))}</li>`
+    out = `<li>${decodeHTMLEntities(children.join(''))}</li>`
   } else {
     return null
   }
+
+  return out
 }
 
 // Middleware to inject prismic context
@@ -171,6 +175,12 @@ app.get('/project/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
         projectsRaw[prevProjectIdx].data.project_title[0].text
       const nextProjectName =
         projectsRaw[nextProjectIdx].data.project_title[0].text
+
+      project.data.project_body.forEach((entry) => {
+        if (entry.type === 'image') {
+          entry.url = entry.url.split('?')[0]
+        }
+      })
 
       res.render('single', {
         activePage: 'home',
@@ -356,6 +366,11 @@ app.get('/blog/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   API.getInstance(req.prismic)
     .fetchArticle(req.params.uid)
     .then((articlePage) => {
+      articlePage.project.data.body.forEach((entry) => {
+        if (entry.type === 'image') {
+          entry.url = entry.url.split('?')[0]
+        }
+      })
       const pageData = {
         activePage: 'blog',
         seoDescription: articlePage.project.data.seo_description,
