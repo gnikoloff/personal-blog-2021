@@ -24,15 +24,22 @@ class API {
     return this._Prismic.api
       .query(Prismic.Predicates.at('document.type', projectType), opts)
       .then((response) => {
-        const projects = (response.results || []).reduce((acc, item, i) => {
-          const projectYear = parseInt(item.data.project_year[0].text, 10)
-          if (!acc[projectYear]) {
-            acc[projectYear] = [item]
-          } else {
-            acc[projectYear] = [...acc[projectYear], item]
-          }
-          return acc
-        }, {})
+        const projects = (response.results || [])
+          .map((project) => {
+            const out = { ...project }
+            out.data.project_image.url =
+              out.data.project_image.url.split('?')[0]
+            return out
+          })
+          .reduce((acc, item, i) => {
+            const projectYear = parseInt(item.data.project_year[0].text, 10)
+            if (!acc[projectYear]) {
+              acc[projectYear] = [item]
+            } else {
+              acc[projectYear] = [...acc[projectYear], item]
+            }
+            return acc
+          }, {})
         const projectsRaw = (response.results || []).sort(
           (a, b) =>
             parseInt(b.data.project_year[0].text, 10) -
