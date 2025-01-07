@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^7.6.0",
+    "@splidejs/splide": "^4.1.4",
     "body-parser": "^1.18.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -20,6 +21,8 @@
     "errorhandler": "^1.5.1",
     "express": "^4.16.4",
     "highlight.js": "^10.4.1",
+    "html-to-formatted-text": "^2.7.0",
+    "image-compare-viewer": "^1.6.2",
     "medium-zoom": "^1.0.6",
     "memory-cache": "^0.2.0",
     "method-override": "~2.3.10",
