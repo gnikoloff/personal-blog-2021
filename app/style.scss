@@ -126,8 +126,8 @@ img {
 .container {
   margin: 0 auto;
   padding: 0 32px;
-  @media (min-width: 880px) {
-    max-width: 768px;
+  @media (min-width: 940px) {
+    max-width: 920px;
     padding: 0;
   }
 }
