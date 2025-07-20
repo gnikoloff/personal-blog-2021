@@ -336,13 +336,13 @@ img {
   li {
     display: inline-block;
     list-style: none;
-    margin-left: 24px;
+    margin-right: 24px;
     &:after {
       content: '/';
       position: relative;
       right: -12px;
     }
-    &:first-of-type {
+    &:last-of-type {
       margin-left: 0;
     }
     &:last-of-type {
