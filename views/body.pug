@@ -5,6 +5,7 @@ html
     .container
       include logo.pug
       include nav.pug
+      +navMixin(false)
       each year in Object.keys(projects).sort((a, b) => parseInt(b) - parseInt(a))
         article.year-wrapper
           h2.year-title #{year}

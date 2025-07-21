@@ -1,14 +1,18 @@
-.nav.nav-outer
-  ul.nav-inner
-    li(class=activePage === 'home' ? 'active' : '')
-      a(href="/") Works
-    li(class=activePage === 'speaking' ? 'active' : '')
-      a(href="/speaking") Speaking
-    li(class=activePage === 'blog' ? 'active' : '')
-      a(href="/blog") Writing
-    li(class=activePage === 'cv' ? 'active' : '')
-      a(href="/vitae") CV
-    li(class=activePage === 'contact' ? 'active' : '')
-      a(href="/contact") Contact
-    li
-      a(href="/feed.rss") RSS
+mixin navMixin(showBackButton, backButtonURL)
+  .nav.nav-outer
+    if showBackButton
+      a(href=backButtonURL).nav-back-button ← Back
+
+    ul.nav-inner
+      li(class=activePage === 'home' ? 'active' : '')
+        a(href="/") Works
+      li(class=activePage === 'speaking' ? 'active' : '')
+        a(href="/speaking") Speaking
+      li(class=activePage === 'blog' ? 'active' : '')
+        a(href="/blog") Writing
+      li(class=activePage === 'cv' ? 'active' : '')
+        a(href="/vitae") CV
+      li(class=activePage === 'contact' ? 'active' : '')
+        a(href="/contact") Contact
+      li
+        a(href="/feed.rss") RSS

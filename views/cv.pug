@@ -5,6 +5,7 @@ html
     .container
       include logo.pug
       include nav.pug
+      +navMixin(false, "/")
 
       a.print.print-top(href="/cv")
         svg.print-icon(

@@ -166,6 +166,8 @@ img {
 
 .nav-outer {
   overflow: auto;
+  display: flex;
+  align-items: baseline;
 }
 
 .nav-inner {
@@ -173,6 +175,22 @@ img {
   width: -moz-fit-content;
   width: fit-content;
   padding: 0;
+}
+
+.nav-back-button {
+  white-space: nowrap;
+  position: relative;
+  margin-right: 42px;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    margin-top: -2px;
+    height: 4px;
+    width: 3px;
+    right: -21px;
+    background: rgba(black, 1);
+  }
 }
 
 .nav {

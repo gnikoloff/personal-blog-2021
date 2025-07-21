@@ -5,6 +5,7 @@ html
     .container
       include logo.pug
       include nav.pug
+      +navMixin(false, "/")
 
       h1 About
       div.about-wrapper

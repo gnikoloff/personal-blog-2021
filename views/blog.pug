@@ -5,6 +5,7 @@ html
     .container
       include logo.pug
       include nav.pug
+      +navMixin(false, "/")
     
       ol.blog-wrapper
         each project in projects

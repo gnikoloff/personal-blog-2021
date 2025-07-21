@@ -6,6 +6,7 @@ html
     .container
       include logo.pug
       include nav.pug
+      +navMixin(true, "/")
       .single-blog-title
         div !{PrismicDOM.RichText.asHtml(project.data.title, null, htmlSerializer)}
         div #{formattedDate}

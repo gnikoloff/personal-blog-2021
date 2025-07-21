@@ -247,7 +247,7 @@ app.get('/speaking/:uid', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
       const nextProjectName =
         projectsRaw[nextProjectIdx].data.project_title[0].text
 
-      res.render('single', {
+      res.render('single-blog', {
         activePage: 'speaking',
         seoDescription: project.data.seo_description,
         title: getPageTitle(project.data.project_title[0].text),
