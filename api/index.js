@@ -98,6 +98,10 @@ app.use((req, res, next) => {
     })
 })
 
+app.get('*', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
+  res.render('wip', {})
+})
+
 app.get('/api/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   Promise.all([
     API.getInstance(req.prismic).fetchAllProjects({
@@ -124,9 +128,4 @@ app.get('/api/', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
   //   res.json(projectsRaw)
   // })
 })
-
-app.get('*', cacheMiddleware(CACHE_TIMEOUT), (req, res) => {
-  res.render('wip', {})
-})
-
 module.exports = app
